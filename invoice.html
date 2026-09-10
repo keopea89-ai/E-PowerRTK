@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>វិក្កយបត្រថ្លៃអគ្គិសនី A5_FULL - {{ inv.invoice_id }}</title>
+    <!-- Google Fonts: Kantumruy Pro & Libre Barcode 39 Text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Kantumruy+Pro:wght@400;500;600;700;800&family=Libre+Barcode+39+Text&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <style>
+        /* ==========================================================================
+           E-PowerRTK: Exact Reproduction of A5_FULL Cambodian Utility Invoice
+           ========================================================================== */
+
+        :root {
+            --bill-blue-dark: #002d72;
+            --bill-blue-header: #003b95;
+            --bill-blue-light: #e8f0fe;
+            --bill-blue-subtle: #f1f5f9;
+            --bill-border: #94a3b8;
+            --bill-red: #c00000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #000000;
+            font-family: 'Kantumruy Pro', 'Inter', -apple-system, sans-serif;
+            font-size: 10px;
+            line-height: 1.35;
+            padding: 20px 10px;
+        }
+
+        /* Screen Top Controls */
+        .actions-bar {
+            max-width: 148mm;
+            margin: 0 auto 14px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-ctrl {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-family: 'Kantumruy Pro', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-back { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
+        .btn-back:hover { background: #334155; color: white; }
+        .btn-toggle { background: #f8fafc; color: #0f172a; border: 1px solid #cbd5e1; }
+        .btn-print {
+            background: linear-gradient(135deg, #003b95 0%, #0284c7 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+        }
+        .btn-print:hover { filter: brightness(1.1); }
+
+        /* ==================== EXACT A5 FULL SHEET (148mm x 210mm) ==================== */
+        .a5-full-sheet {
+            width: 148mm;
+            min-height: 210mm;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 7mm 8mm 6mm 8mm;
+            position: relative;
+            color: #000000;
+        }
+
+        /* Top Header */
+        .main-header {
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .title-company {
+            font-size: 16px;
+            font-weight: 800;
+            color: #b91c1c; /* Crimson Red Header as in A5_FULL */
+            letter-spacing: 0.5px;
+        }
+
+        .sub-company-loc {
+            font-size: 10px;
+            color: #003b95;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+
+        .vatin-info {
+            font-size: 9.5px;
+            color: #003b95;
+            font-weight: 600;
+            margin-top: 1px;
+        }
+
+        .blue-divider {
+            height: 2px;
+            background-color: #003b95;
+            margin: 5px 0 7px 0;
+        }
+
+        /* Meta Two-Column Details */
+        .info-split {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 10px;
+            margin-bottom: 6px;
+            font-size: 9.5px;
+        }
+
+        .barcode-visual {
+            font-family: 'Libre Barcode 39 Text', 'Inter', monospace;
+            font-size: 26px;
+            line-height: 1;
+            margin-bottom: 2px;
+            letter-spacing: 2px;
+        }
+
+        .cust-name-line {
+            font-size: 12px;
+            font-weight: 800;
+            color: #000000;
+            margin: 1px 0;
+        }
+
+        .cust-address-line {
+            font-size: 9.5px;
+            color: #1e293b;
+        }
+
+        .start-date-line {
+            font-size: 9px;
+            color: #000000;
+            margin-top: 3px;
+        }
+
+        /* Right column meta table */
+        .meta-table-right {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5px;
+        }
+
+        .meta-table-right td {
+            padding: 1.5px 2px;
+            vertical-align: middle;
+        }
+
+        .meta-lbl {
+            color: #000000;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .meta-val {
+            font-weight: 700;
+            color: #000000;
+            text-align: right;
+            font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+        }
+
+        .inv-num-bold {
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* Reading Main Table */
+        .meter-reading-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            font-size: 9px;
+            border: 1px solid #000000;
+        }
+
+        .meter-reading-table th {
+            background-color: #002d72;
+            color: #ffffff;
+            padding: 4px 3px;
+            font-size: 8.5px;
+            font-weight: 700;
+            border: 1px solid #002d72;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .meter-reading-table th span {
+            display: block;
+            font-size: 7.5px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .meter-reading-table td {
+            padding: 3px 4px;
+            border: 1px solid #cbd5e1;
+            text-align: right;
+            font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+            font-size: 9.5px;
+        }
+
+        .meter-reading-table td.text-left { text-align: left; }
+        .meter-reading-table td.text-center { text-align: center; }
+
+        .balance-forward-row td {
+            font-size: 8.5px;
+            padding: 2px 4px;
+            background: #ffffff;
+            border: none;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* 12-Month Consumption History */
+        .history-box {
+            border: 1px solid #002d72;
+            padding: 4px 6px;
+            margin-bottom: 6px;
+        }
+
+        .history-title {
+            font-size: 9px;
+            font-weight: 700;
+            color: #002d72;
+            margin-bottom: 3px;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px 6px;
+            font-size: 8.5px;
+            font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+        }
+
+        /* Bottom Middle Split: Notes vs Total Balance Table */
+        .middle-split {
+            display: grid;
+            grid-template-columns: 1.1fr 1.05fr;
+            gap: 6px;
+            margin-bottom: 6px;
+            align-items: stretch;
+        }
+
+        .notes-box {
+            border: 1px solid #94a3b8;
+            padding: 4px 6px;
+            font-size: 7.8px;
+            line-height: 1.35;
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .notes-header {
+            font-weight: 800;
+            text-decoration: underline;
+            margin-bottom: 2px;
+            color: #000000;
+        }
+
+        .notes-content p {
+            margin-bottom: 2px;
+            text-indent: -7px;
+            padding-left: 7px;
+        }
+
+        .notes-red {
+            color: #c00000;
+            font-weight: 600;
+        }
+
+        /* Total Balance Table (Blue table with shaded cells) */
+        .balance-card-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9.5px;
+            border: 1.5px solid #002d72;
+        }
+
+        .balance-card-table td {
+            padding: 3px 6px;
+            border: 1px solid #002d72;
+        }
+
+        .lbl-shaded {
+            background-color: #8da4c4; /* Blue shading as in sample */
+            color: #000000;
+            font-weight: 700;
+            font-size: 8.5px;
+        }
+
+        .val-total-due {
+            font-size: 13px;
+            font-weight: 900;
+            color: #000000;
+            text-align: right;
+            font-family: 'Inter', sans-serif;
+            background: #e8f0fe;
+        }
+
+        .val-due-date {
+            font-size: 10.5px;
+            font-weight: 800;
+            text-align: right;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Tear-off Bottom Stub (កន្ទុយវិក្កយបត្រ) */
+        .tear-off-divider {
+            border-top: 1.5px dashed #003b95;
+            margin: 6px 0 5px 0;
+            position: relative;
+        }
+
+        .stub-split {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr;
+            gap: 6px;
+            align-items: start;
+        }
+
+        .stub-info-left {
+            font-size: 8.5px;
+            line-height: 1.3;
+        }
+
+        .stub-table-right {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9px;
+            border: 1px solid #002d72;
+        }
+
+        .stub-table-right td {
+            padding: 2px 5px;
+            border: 1px solid #002d72;
+        }
+
+        /* Mini KHQR Float in Notes Box */
+        .khqr-inline {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 3px;
+            padding-top: 3px;
+            border-top: 1px dashed #cbd5e1;
+        }
+
+        /* ==================== A5 EXACT PRINT CSS ==================== */
+        @media print {
+            @page {
+                size: A5 portrait;
+                margin: 5mm 6mm;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                color: black !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .actions-bar {
+                display: none !important;
+            }
+
+            .a5-full-sheet {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                page-break-inside: avoid !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Screen Action Controls -->
+    <div class="actions-bar">
+        <a href="/" class="btn-ctrl btn-back">
+            &larr; ត្រឡប់ទៅផ្ទាំងគ្រប់គ្រង
+        </a>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-ctrl btn-toggle" onclick="togglePaymentStatus('{{ inv.invoice_id }}')">
+                🔄 ប្តូរស្ថានភាព ({{ 'បង់រួច' if inv.status == 'Paid' else 'មិនទាន់បង់' }})
+            </button>
+            <button class="btn-ctrl btn-print" onclick="window.print()">
+                🖨️ បោះពុម្ព A5_FULL (Print / Save PDF)
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== A5 FULL DOCUMENT ==================== -->
+    <div class="a5-full-sheet">
+
+        <!-- 1. Header Section -->
+        <header class="main-header">
+            <h1 class="title-company">ស្ថានីយចែកចាយអគ្គិសនី E-PowerRTK</h1>
+            <div class="sub-company-loc">ភូមិ ២ សង្កាត់ កាចាញ ក្រុង បានលុង ខេត្តរតនគិរី</div>
+            <div class="vatin-info">លេខអត្តសញ្ញាណកម្ម អ.ត.ប (VATIN) ៖ E108-1500017570</div>
+        </header>
+
+        <div class="blue-divider"></div>
+
+        <!-- 2. Customer & Invoice Meta Grid -->
+        <div class="info-split">
+            <!-- Left Meta -->
+            <div>
+                <div class="barcode-visual">*{{ inv.customer_id }}*</div>
+                <div style="font-weight: 700; font-size: 11px;">អតិថិជន - {{ inv.customer_id }}</div>
+                <div class="cust-name-line">{{ inv.customer_name }}</div>
+                <div class="cust-address-line">{{ inv.address or 'ភូមិ ២ សង្កាត់ កាចាញ ក្រុង បានលុង ខេត្តរតនគិរី' }} {{ inv.phone }}</div>
+                <div class="start-date-line">ថ្ងៃចាប់ផ្ដើមទទួលប្រាក់ ៖ {{ inv.created_at }}</div>
+            </div>
+
+            <!-- Right Meta Table -->
+            <div>
+                <table class="meta-table-right">
+                    <tr>
+                        <td class="meta-lbl">លេខវិក្កយបត្រ INVOICE NO</td>
+                        <td class="meta-val inv-num-bold">{{ inv.invoice_id }}</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-lbl">ថ្ងៃចេញ INVOICE DATE</td>
+                        <td class="meta-val">{{ inv.created_at }}</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-lbl">តំបន់ AREA</td>
+                        <td class="meta-val">កាចាញ</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-lbl">លេខទីតាំង LOCATION</td>
+                        <td class="meta-val">J01</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-lbl">គិតចាប់ពីថ្ងៃទី FROM</td>
+                        <td class="meta-val">01-{{ inv.month_year.split('/')[0] if '/' in inv.month_year else '08' }}-2026</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-lbl">ដល់ថ្ងៃទី TO</td>
+                        <td class="meta-val">31-{{ inv.month_year.split('/')[0] if '/' in inv.month_year else '08' }}-2026</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-lbl">ទំហំ METER SIZE</td>
+                        <td class="meta-val">15mm (220V)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. Readings & Tariff Table -->
+        <table class="meter-reading-table">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">លេខនាឡិកាស្ទង់<span>METER</span></th>
+                    <th style="width: 14%;">អំណានចាស់<span>PREVIOUS</span></th>
+                    <th style="width: 14%;">អំណានថ្មី<span>CURRENT</span></th>
+                    <th style="width: 18%;">បរិមាណប្រើប្រាស់<span>CONSUMPTION</span></th>
+                    <th style="width: 16%;">តម្លៃឯកតា<span>RATE</span></th>
+                    <th style="width: 18%;">តម្លៃសរុប<span>AMOUNT</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="balance-forward-row">
+                    <td colspan="5" class="text-left" style="color:#000;">ប្រាក់ជំពាក់ពេលមុន Balance brought forward : ៛</td>
+                    <td style="font-weight: 600;">0</td>
+                </tr>
+                <tr class="balance-forward-row">
+                    <td colspan="5" class="text-left" style="color:#000;">ប្រាក់បានទទួល Payment Receive - THANK YOU : ៛</td>
+                    <td style="font-weight: 600;">0</td>
+                </tr>
+                <tr class="balance-forward-row">
+                    <td colspan="5" class="text-left" style="color:#000;">ជំពាក់សរុបនៅថ្ងៃធ្វើវិក្កយបត្រ Balance as at billing date : ៛</td>
+                    <td style="font-weight: 600;">-</td>
+                </tr>
+                <tr>
+                    <td class="text-center" style="font-weight: 700; color: #003b95;">
+                        <small style="display:block; font-size:8px; color:#64748b;">{{ inv.created_at }}</small>
+                        {{ inv.meter_number }}
+                    </td>
+                    <td class="text-center">{{ inv.old_reading | number_fmt }}</td>
+                    <td class="text-center">{{ inv.new_reading | number_fmt }}</td>
+                    <td class="text-center" style="font-weight: 800; color: #003b95;">
+                        {{ inv.total_units | number_fmt }}
+                    </td>
+                    <td class="text-center">{{ inv.rate_per_unit | currency_khr }}</td>
+                    <td style="font-weight: 800;">{{ inv.total_amount | currency_khr }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-left">ថែទាំនាឡិកា (Maintenance)</td>
+                    <td class="text-center">1</td>
+                    <td class="text-center">0៛</td>
+                    <td style="font-weight: 600;">0៛</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 4. 12-Month Consumption History -->
+        <div class="history-box">
+            <div class="history-title">ប្រវត្តិការប្រើប្រាស់ថាមពលអគ្គិសនីរយៈពេល 12 ខែកន្លងមក</div>
+            <div class="history-grid">
+                <div>08-2025: 120 kWh</div>
+                <div>09-2025: 135 kWh</div>
+                <div>10-2025: 140 kWh</div>
+                <div>11-2025: 125 kWh</div>
+                <div>12-2025: 150 kWh</div>
+                <div>01-2026: 145 kWh</div>
+                <div>02-2026: 130 kWh</div>
+                <div>03-2026: 160 kWh</div>
+                <div>04-2026: 155 kWh</div>
+                <div>05-2026: 170 kWh</div>
+                <div>06-2026: 165 kWh</div>
+                <div>07-2026: {{ inv.total_units | number_fmt }} kWh</div>
+            </div>
+        </div>
+
+        <!-- 5. Notes & Total Due Split -->
+        <div class="middle-split">
+            <!-- Left Notes Box -->
+            <div class="notes-box">
+                <div class="notes-content">
+                    <div class="notes-header">ចំណាំ</div>
+                    <p class="notes-red">* ហួសកំណត់ពេលបង់ប្រាក់ដែលបានកំណត់នេះ ក្នុងករណីអតិថិជនពុំបានមកបង់ប្រាក់ក្រុមហ៊ុននឹងផ្អាកការប្រើប្រាស់។</p>
+                    <p>* ការភ្ជាប់ការប្រើប្រាស់ឡើងវិញ លុះត្រាតែអតិថិជនបានទូទាត់បំណុលសរុបក្នុងវិក្កយបត្រនេះ និង សេវាភ្ជាប់រួចហើយ។</p>
+                    <p>* សូមអញ្ជើញមកបង់ប្រាក់ផ្ទាល់នៅការិយាល័យបង់ប្រាក់របស់ក្រុមហ៊ុន ឬស្កេន KHQR។</p>
+                </div>
+
+                <!-- Mini KHQR Support Inside Notes Box -->
+                <div class="khqr-inline">
+                    <canvas id="khqrCanvas" width="44" height="44"></canvas>
+                    <div>
+                        <div style="font-size: 8px; font-weight: 800; color: #e11d48;">Bakong KHQR</div>
+                        <div style="font-size: 7.5px; color: #475569;">ស្កេនទូទាត់ប្រាក់ភ្លាមៗ</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Total Balance Table -->
+            <table class="balance-card-table">
+                <tr>
+                    <td class="lbl-shaded">បំណុលសរុប TOTAL BALANCE ៛</td>
+                    <td class="val-total-due">{{ inv.total_amount | currency_khr }}</td>
+                </tr>
+                <tr>
+                    <td class="lbl-shaded">ប្រាក់ត្រូវបង់ TOTAL DUE ៛</td>
+                    <td class="val-total-due" style="color: #b91c1c;">{{ inv.total_amount | currency_khr }}</td>
+                </tr>
+                <tr>
+                    <td class="lbl-shaded">ថ្ងៃផុតកំណត់ DUE DATE</td>
+                    <td class="val-due-date" style="color: #b91c1c;">{{ inv.due_date }}</td>
+                </tr>
+                <tr>
+                    <td class="lbl-shaded">ថ្ងៃបង់ប្រាក់ PAY DATE</td>
+                    <td class="val-due-date">{{ inv.created_at if inv.status == 'Paid' else '' }}</td>
+                </tr>
+                <tr>
+                    <td class="lbl-shaded">ប្រាក់បានបង់ PAY AMOUNT</td>
+                    <td class="val-due-date">{{ inv.total_amount | currency_khr if inv.status == 'Paid' else '' }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 6. Tear-off Perforated Line (កន្ទុយវិក្កយបត្រ) -->
+        <div class="tear-off-divider"></div>
+
+        <!-- 7. Bottom Stub Section -->
+        <div class="stub-split">
+            <!-- Left Stub Info -->
+            <div class="stub-info-left">
+                <div style="font-weight: 700; font-size: 9px;">
+                    វិក្កយបត្រ {{ inv.month_year }} - {{ inv.invoice_id }}
+                </div>
+                <div style="font-weight: 700; font-size: 10px; margin: 1px 0;">
+                    អតិថិជន {{ inv.customer_id }} {{ inv.customer_name }}
+                </div>
+                <div>{{ inv.phone }} {{ inv.address or 'ភូមិ ២ សង្កាត់ កាចាញ ក្រុង បានលុង ខេត្តរតនគិរី' }}</div>
+                <div>លេខទីតាំង J01 | នាឡិកាស្ទង់ <strong>{{ inv.meter_number }}</strong></div>
+                <div class="barcode-visual" style="font-size: 20px; margin-top: 1px;">*{{ inv.customer_id }}*</div>
+            </div>
+
+            <!-- Right Stub Table -->
+            <table class="stub-table-right">
+                <tr>
+                    <td class="lbl-shaded" style="font-size: 8px;">ប្រាក់ត្រូវបង់ TOTAL DUE ៛</td>
+                    <td style="font-weight: 800; font-size: 11px; text-align: right; background:#e8f0fe;">
+                        {{ inv.total_amount | currency_khr }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lbl-shaded" style="font-size: 8px;">ថ្ងៃបង់ប្រាក់ PAY DATE</td>
+                    <td style="text-align: right;">{{ inv.created_at if inv.status == 'Paid' else '' }}</td>
+                </tr>
+                <tr>
+                    <td class="lbl-shaded" style="font-size: 8px;">ប្រាក់បានបង់ PAY AMOUNT ៛</td>
+                    <td style="text-align: right; font-weight: 700;">{{ inv.total_amount | currency_khr if inv.status == 'Paid' else '' }}</td>
+                </tr>
+                <tr>
+                    <td class="lbl-shaded" style="font-size: 8px;">អ្នកទទួលប្រាក់ RECEIVER</td>
+                    <td style="text-align: right; font-weight: 600;">Sokleng</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- KHQR Code Canvas Script -->
+    <script>
+        function generateKHQR() {
+            const canvas = document.getElementById('khqrCanvas');
+            if (!canvas) return;
+            const totalAmount = "{{ inv.total_amount }}";
+            const invId = "{{ inv.invoice_id }}";
+            const billText = `KHQR:E-POWER-RTK|INV:${invId}|KHR:${totalAmount}|STATUS:{{ inv.status }}`;
+
+            const ctx = canvas.getContext('2d');
+            const size = 44;
+            const cells = 21;
+            const cellSize = size / cells;
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, size, size);
+
+            let hash = 0;
+            for (let i = 0; i < billText.length; i++) {
+                hash = ((hash << 5) - hash) + billText.charCodeAt(i);
+                hash |= 0;
+            }
+
+            function isFinder(r, c) {
+                if (r < 6 && c < 6) return true;
+                if (r < 6 && c >= cells - 6) return true;
+                if (r >= cells - 6 && c < 6) return true;
+                return false;
+            }
+
+            function drawFinder(startR, startC) {
+                ctx.fillStyle = "#002d72";
+                ctx.fillRect(startC * cellSize, startR * cellSize, 6 * cellSize, 6 * cellSize);
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect((startC + 1) * cellSize, (startR + 1) * cellSize, 4 * cellSize, 4 * cellSize);
+                ctx.fillStyle = "#e11d48";
+                ctx.fillRect((startC + 2) * cellSize, (startR + 2) * cellSize, 2 * cellSize, 2 * cellSize);
+            }
+
+            drawFinder(0, 0);
+            drawFinder(0, cells - 6);
+            drawFinder(cells - 6, 0);
+
+            ctx.fillStyle = "#002d72";
+            for (let r = 0; r < cells; r++) {
+                for (let c = 0; c < cells; c++) {
+                    if (isFinder(r, c)) continue;
+                    const bit = Math.sin(r * 11 + c * 29 + hash) > 0;
+                    if (bit) {
+                        ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
+        }
+
+        window.onload = generateKHQR;
+
+        function togglePaymentStatus(invoiceId) {
+            fetch(`/api/invoices/${invoiceId}/toggle-status`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                })
+                .catch(err => alert("Connection error: " + err));
+        }
+    </script>
+</body>
+</html>

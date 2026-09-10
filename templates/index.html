@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-PowerRTK - ប្រព័ន្ធគ្រប់គ្រងការប្រើប្រាស់ភ្លើង និងចេញវិក្កយបត្រ</title>
+    <!-- Google Fonts: Kantumruy Pro & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link rel="stylesheet" href="/static/css/style.css?v=3.1">
+</head>
+<body class="dark-theme">
+
+    <div class="app-layout">
+        <!-- ==================== LEFT SIDEBAR ==================== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <img src="/static/logo.png" alt="E-PowerRTK Logo" class="brand-logo-img">
+                </div>
+                <div class="brand-info">
+                    <h2>E-PowerRTK</h2>
+                    <p>គ្រប់គ្រងភ្លើង & វិក្កយបត្រ</p>
+                </div>
+            </div>
+
+            <!-- Sidebar Navigation Links -->
+            <nav class="sidebar-menu">
+                <button class="menu-item active" data-tab="dashboard" onclick="switchTab('dashboard')">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">ផ្ទាំងគ្រប់គ្រង (Dashboard)</span>
+                </button>
+                <button class="menu-item" data-tab="customers" onclick="switchTab('customers')">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">គ្រប់គ្រងអតិថិជន (E01)</span>
+                </button>
+                <button class="menu-item" data-tab="readings" onclick="switchTab('readings')">
+                    <span class="menu-icon">⚡</span>
+                    <span class="menu-text">បញ្ចូលការប្រើប្រាស់ (E02)</span>
+                </button>
+                <button class="menu-item" data-tab="payments" onclick="switchTab('payments')">
+                    <span class="menu-icon">💵</span>
+                    <span class="menu-text">បង់ប្រាក់ (E03)</span>
+                </button>
+                <button class="menu-item" data-tab="receipts" onclick="switchTab('receipts')">
+                    <span class="menu-icon">🖨️</span>
+                    <span class="menu-text">បោះពុម្ពបង្កាន់ដៃ (E04)</span>
+                </button>
+                <button class="menu-item" data-tab="void_payments" onclick="switchTab('void_payments')">
+                    <span class="menu-icon">🗑️</span>
+                    <span class="menu-text">លុបការបង់ប្រាក់ (E05)</span>
+                </button>
+                <button class="menu-item" data-tab="invoices" onclick="switchTab('invoices')">
+                    <span class="menu-icon">🧾</span>
+                    <span class="menu-text">វិក្កយបត្រ (Invoices)</span>
+                </button>
+            </nav>
+
+            <!-- User Profile in Sidebar Bottom -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">អ</div>
+                    <div class="user-meta">
+                        <span class="user-name">admin</span>
+                        <span class="user-role"><span class="status-dot"></span> អ្នកគ្រប់គ្រង</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ==================== MAIN CONTENT AREA ==================== -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-title">
+                    <h1 id="pageHeadingTitle">ផ្ទាំងគ្រប់គ្រង (Dashboard)</h1>
+                    <p id="pageHeadingSub">ប្រព័ន្ធគ្រប់គ្រងទិន្នន័យការប្រើប្រាស់ភ្លើង និងចេញវិក្កយបត្រ</p>
+                </div>
+                <div class="top-actions">
+                    <div class="date-chip" id="currentDateBadge">
+                        📅 <span id="headerDateDisplay"></span>
+                    </div>
+                    <div class="lang-chip">
+                        <span>🇰🇭 Khmer</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+
+                <!-- ==================== TAB 1: DASHBOARD ==================== -->
+                <section id="tab-dashboard" class="tab-content active">
+                    <!-- KPI Cards (Horizontal Neon Glow) -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card card-glow-purple">
+                            <div class="kpi-body">
+                                <span class="kpi-title">អតិថិជនសរុប</span>
+                                <div class="kpi-value"><span id="statCustomers">...</span> <small>នាក់</small></div>
+                                <span class="kpi-hint">អ្នកប្រើប្រាស់ក្នុងប្រព័ន្ធ</span>
+                            </div>
+                            <div class="kpi-icon-bubble bubble-purple">👥</div>
+                        </div>
+
+                        <div class="kpi-card card-glow-cyan">
+                            <div class="kpi-body">
+                                <span class="kpi-title">ថាមពលប្រើប្រាស់ខែនេះ</span>
+                                <div class="kpi-value"><span id="statUnits">...</span> <small>kWh</small></div>
+                                <span class="kpi-hint">គីឡូវ៉ាត់ម៉ោងសរុប</span>
+                            </div>
+                            <div class="kpi-icon-bubble bubble-cyan">⚡</div>
+                        </div>
+
+                        <div class="kpi-card card-glow-green">
+                            <div class="kpi-body">
+                                <span class="kpi-title">ចំណូលសរុបទទួលបាន</span>
+                                <div class="kpi-value" id="statRevenue">...</div>
+                                <span class="kpi-hint">ស្មើប្រមាណ <strong id="statRevenueUsd" style="color:#10b981;">$0.00</strong></span>
+                            </div>
+                            <div class="kpi-icon-bubble bubble-green">💰</div>
+                        </div>
+
+                        <div class="kpi-card card-glow-red">
+                            <div class="kpi-body">
+                                <span class="kpi-title">ប្រាក់ជំពាក់មិនទាន់បង់</span>
+                                <div class="kpi-value" id="statUnpaidAmount">0 ៛</div>
+                                <span class="kpi-hint" style="color:#f87171;"><strong id="statUnpaidCount">...</strong> មិនទាន់ទូទាត់</span>
+                            </div>
+                            <div class="kpi-icon-bubble bubble-red">⏳</div>
+                        </div>
+                    </div>
+
+                    <!-- Action Shortcut Buttons -->
+                    <div class="action-bar-row">
+                        <button class="btn btn-action-purple" onclick="openCustomerModal()">
+                            <span class="icon">+</span> ចុះឈ្មោះអតិថិជនថ្មី
+                        </button>
+                        <button class="btn btn-action-blue" onclick="openReadingModal()">
+                            <span class="icon">⚡</span> កត់ត្រាកុងទ័រភ្លើង (Meter Reading)
+                        </button>
+                        <button class="btn btn-action-green" onclick="switchTab('invoices')">
+                            <span class="icon">🧾</span> វិក្កយបត្រទាំងអស់ (Invoices)
+                        </button>
+                    </div>
+
+                    <!-- Split Grids: Recent Invoices & Recent Readings -->
+                    <div class="dashboard-split">
+                        <!-- Left Panel: Recent Invoices -->
+                        <div class="dark-panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <span class="icon-title">🧾</span>
+                                    <h3>វិក្កយបត្រថ្មីៗ</h3>
+                                </div>
+                                <button class="btn-text-link" onclick="switchTab('invoices')">មើលទាំងអស់ &rarr;</button>
+                            </div>
+                            <div class="table-scroll">
+                                <table class="dark-table">
+                                    <thead>
+                                        <tr>
+                                            <th>លេខវិក្កយបត្រ</th>
+                                            <th>ឈ្មោះអតិថិជន</th>
+                                            <th>ថាមពល</th>
+                                            <th>ទឹកប្រាក់</th>
+                                            <th>ស្ថានភាព</th>
+                                            <th>បោះពុម្ព</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboardInvoicesTable">
+                                        <tr><td colspan="6" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Recent Readings -->
+                        <div class="dark-panel">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <span class="icon-title">⚡</span>
+                                    <h3>ការកត់ត្រាកុងទ័រចុងក្រោយ</h3>
+                                </div>
+                                <button class="btn-text-link" onclick="switchTab('readings')">មើលទាំងអស់ &rarr;</button>
+                            </div>
+                            <div class="table-scroll">
+                                <table class="dark-table">
+                                    <thead>
+                                        <tr>
+                                            <th>កូដកត់ត្រា</th>
+                                            <th>អតិថិជន</th>
+                                            <th>លេខចាស់ &rarr; ថ្មី</th>
+                                            <th>ប្រើសរុប</th>
+                                            <th>កាលបរិច្ឆេទ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboardReadingsTable">
+                                        <tr><td colspan="5" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 2: CUSTOMERS ==================== -->
+                <section id="tab-customers" class="tab-content">
+                    <div class="section-toolbar">
+                        <div class="toolbar-info">
+                            <h2>តារាងអតិថិជន (Customers)</h2>
+                            <p>គ្រប់គ្រងទិន្នន័យអតិថិជន ទីតាំង និងលេខកុងទ័រ (Meter ID)</p>
+                        </div>
+                        <div class="toolbar-controls">
+                            <div class="search-input-wrap">
+                                <input type="text" id="customerSearchInput" placeholder="វាយបញ្ចូលដើម្បីស្វែងរក (ឈ្មោះ, លេខកុងទ័រ, ទូរស័ព្ទ)..." oninput="handleCustomerInputSearch()" onkeydown="handleCustomerSearchKeyDown(event)">
+                                <button type="button" id="btnCustomerSearchClear" onclick="clearCustomerSearch()" title="សម្អាត" class="btn-search-clear" style="display:none;">&times;</button>
+                                <button type="button" class="btn-search" onclick="doCustomerSearch()"><span>🔍</span> ស្វែងរក</button>
+                            </div>
+                            <button class="btn btn-action-purple" onclick="openCustomerModal()">
+                                + ចុះឈ្មោះអតិថិជនថ្មី
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dark-panel">
+                        <div class="table-scroll">
+                            <table class="dark-table">
+                                <thead>
+                                    <tr>
+                                        <th>កូដអតិថិជន</th>
+                                        <th>ឈ្មោះអតិថិជន (Name)</th>
+                                        <th>ភេទ</th>
+                                        <th>មុខរបរ</th>
+                                        <th>លេខទូរស័ព្ទ / គណនី</th>
+                                        <th>អត្តសញ្ញាណប័ណ្ណ</th>
+                                        <th>ប្រភេទអតិថិជន</th>
+                                        <th>អាសយដ្ឋាន / ទីតាំង</th>
+                                        <th>លេខកុងទ័រ (Meter ID)</th>
+                                        <th>ថ្ងៃចុះឈ្មោះ</th>
+                                        <th>សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTableBody">
+                                    <tr><td colspan="11" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 3: METER READINGS ==================== -->
+                <section id="tab-readings" class="tab-content">
+                    <div class="section-toolbar">
+                        <div class="toolbar-info">
+                            <h2>តារាងកត់ត្រាការប្រើប្រាស់ (Meter Readings)</h2>
+                            <p>គណនាគីឡូភ្លើង: <strong>ថាមពល (kWh) = លេខថ្មី - លេខចាស់</strong></p>
+                        </div>
+                        <div class="toolbar-controls">
+                            <div class="search-input-wrap">
+                                <input type="text" id="readingSearchInput" placeholder="វាយបញ្ចូលដើម្បីស្វែងរក (អតិថិជន, លេខកុងទ័រ, ខែ)..." oninput="handleReadingInputSearch()" onkeydown="handleReadingSearchKeyDown(event)">
+                                <button type="button" id="btnReadingSearchClear" onclick="clearReadingSearch()" title="សម្អាត" class="btn-search-clear" style="display:none;">&times;</button>
+                                <button type="button" class="btn-search" onclick="doReadingSearch()"><span>🔍</span> ស្វែងរក</button>
+                            </div>
+                            <button class="btn btn-action-blue" onclick="openReadingModal()">
+                                ⚡ + កត់ត្រាការប្រើប្រាស់ថ្មី
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dark-panel">
+                        <div class="table-scroll">
+                            <table class="dark-table">
+                                <thead>
+                                    <tr>
+                                        <th>កូដកត់ត្រា</th>
+                                        <th>អតិថិជន</th>
+                                        <th>លេខកុងទ័រ</th>
+                                        <th>ខែ/ឆ្នាំ</th>
+                                        <th>លេខចាស់ (kWh)</th>
+                                        <th>លេខថ្មី (kWh)</th>
+                                        <th>ប្រើសរុប (kWh)</th>
+                                        <th>ថ្ងៃកត់ត្រា</th>
+                                        <th>វិក្កយបត្រ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="readingsTableBody">
+                                    <tr><td colspan="9" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 4: INVOICES & PAYMENTS ==================== -->
+                <section id="tab-invoices" class="tab-content">
+                    <div class="section-toolbar">
+                        <div class="toolbar-info">
+                            <h2>តារាងវិក្កយបត្រ និងការទូទាត់ (Invoices & Payments)</h2>
+                            <p>គណនាប្រាក់: <strong>ទឹកប្រាក់ = ថាមពល × ៨០០៛</strong> | ភ្ជាប់ KHQR ស្វ័យប្រវត្តិ</p>
+                        </div>
+                        <div class="toolbar-controls">
+                            <div class="search-input-wrap">
+                                <input type="text" id="invoiceSearchInput" placeholder="វាយបញ្ចូលដើម្បីស្វែងរក (វិក្កយបត្រ, អតិថិជន, លេខកុងទ័រ)..." oninput="handleInvoiceInputSearch()" onkeydown="handleInvoiceSearchKeyDown(event)">
+                                <button type="button" id="btnInvoiceSearchClear" onclick="clearInvoiceSearch()" title="សម្អាត" class="btn-search-clear" style="display:none;">&times;</button>
+                                <button type="button" class="btn-search" onclick="doInvoiceSearch()"><span>🔍</span> ស្វែងរក</button>
+                            </div>
+                            <div class="dark-filter-group">
+                                <button class="filter-pill active" data-filter="all" onclick="filterInvoices('all')">ទាំងអស់</button>
+                                <button class="filter-pill" data-filter="Unpaid" onclick="filterInvoices('Unpaid')">មិនទាន់បង់</button>
+                                <button class="filter-pill" data-filter="Paid" onclick="filterInvoices('Paid')">បង់រួច</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dark-panel">
+                        <div class="table-scroll">
+                            <table class="dark-table">
+                                <thead>
+                                    <tr>
+                                        <th>លេខវិក្កយបត្រ</th>
+                                        <th>អតិថិជន</th>
+                                        <th>លេខកុងទ័រ</th>
+                                        <th>ខែ/ឆ្នាំ</th>
+                                        <th>ថាមពល (kWh)</th>
+                                        <th>តម្លៃ/kWh</th>
+                                        <th>ទឹកប្រាក់សរុប (រៀល)</th>
+                                        <th>ថ្ងៃផុតកំណត់</th>
+                                        <th>ស្ថានភាព</th>
+                                        <th>សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoicesTableBody">
+                                    <tr><td colspan="10" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 5: PAYMENTS (E03) ==================== -->
+                <section id="tab-payments" class="tab-content">
+                    <!-- Top Toolbar for Tab 5 -->
+                    <div class="section-toolbar">
+                        <div class="toolbar-info">
+                            <h2>បង់ប្រាក់ & ប្រតិបត្តិការ (Payments - E03)</h2>
+                            <p>ទម្រង់បង់ប្រាក់ថ្លៃភ្លើង សាច់ប្រាក់ KHQR និងធនាគារ តាមគំរូ E03 ផ្លូវការ</p>
+                        </div>
+                        <div class="toolbar-controls">
+                            <button type="button" class="btn btn-action-green" onclick="resetE03TabForm()">
+                                🔄 សម្អាតទម្រង់បង់ប្រាក់
+                            </button>
+                            <button type="button" class="btn btn-action-blue" onclick="openCustomerPickerFor('E03Tab')">
+                                🔍 ជ្រើសរើសអតិថិជន
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Embedded E03 Payment Form (Exact Replica of Pictures/E03.jpg) -->
+                    <div class="e03-embedded-card">
+                        <!-- Form Window Title Bar -->
+                        <div class="e01-title-bar">
+                            <span class="e01-title-text">💳 បង់ប្រាក់ (Form បង់ប្រាក់ - E03)</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label class="e01-chk-lbl" style="color: #ffffff; font-size: 11px;">
+                                    <input type="checkbox" id="e03TabAutoFill" checked class="e01-chk">
+                                    <span>បញ្ចូលប្រាក់បង់ដោយស្វ័យប្រវត្តិ</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="e03-body">
+                            <!-- Section 1: Customer & Payment System Info -->
+                            <fieldset class="e02-group-box">
+                                <legend class="e02-group-title">ព័ត៌មានអតិថិជន & ប្រព័ន្ធទូទាត់</legend>
+                                <div class="e02-grid-row">
+                                    <div class="e02-col">
+                                        <label class="e02-lbl">លេខកូដ :</label>
+                                        <div class="e02-input-picker">
+                                            <input type="text" id="e03TabCustID" class="e02-input e01-readonly" readonly placeholder="ជ្រើសរើស...">
+                                            <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E03Tab')" title="ស្វែងរកអតិថិជន">🔍</button>
+                                        </div>
+                                    </div>
+                                    <div class="e02-col" style="flex: 1.5;">
+                                        <label class="e02-lbl">ឈ្មោះអតិថិជន :</label>
+                                        <div class="e02-input-picker">
+                                            <input type="text" id="e03TabCustName" class="e02-input e01-readonly" readonly placeholder="ឈ្មោះអតិថិជន">
+                                            <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E03Tab')" title="ស្វែងរកអតិថិជន">🔍</button>
+                                        </div>
+                                    </div>
+                                    <div class="e02-col">
+                                        <label class="e02-lbl">លេខនាឡិកាស្ទង់ :</label>
+                                        <div class="e02-input-picker">
+                                            <input type="text" id="e03TabMeterID" class="e02-input e01-readonly" readonly placeholder="លេខកុងទ័រ">
+                                            <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E03Tab')" title="ស្វែងរកអតិថិជន">🔍</button>
+                                        </div>
+                                    </div>
+                                    <div class="e02-col">
+                                        <label class="e02-lbl">រូបិយប័ណ្ណ* :</label>
+                                        <select id="e03TabCurrency" class="e02-select" onchange="calculateE03TabPayment()">
+                                            <option value="KHR">រៀល (៛) - KHR</option>
+                                            <option value="USD">ដុល្លារ ($) - USD</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="e02-grid-row mt-2">
+                                    <div class="e02-col">
+                                        <label class="e02-lbl">តំបន់ :</label>
+                                        <input type="text" id="e03TabZone" class="e02-input e01-readonly" readonly value="បានលុង">
+                                    </div>
+                                    <div class="e02-col">
+                                        <label class="e02-lbl">ផ្លូវ :</label>
+                                        <input type="text" id="e03TabStreet" class="e02-input e01-readonly" readonly value="ផ្លូវធំ">
+                                    </div>
+                                    <div class="e02-col">
+                                        <label class="e02-lbl">លេខទីតាំង :</label>
+                                        <input type="text" id="e03TabLocation" class="e02-input e01-readonly" readonly placeholder="ទីតាំង">
+                                    </div>
+                                    <div class="e02-col">
+                                        <label class="e02-lbl">វិធីទូទាត់* :</label>
+                                        <select id="e03TabMethod" class="e02-select" onchange="handleE03TabMethodChange()">
+                                            <option value="សាច់ប្រាក់ក្នុងកេះ">សាច់ប្រាក់ក្នុងកេះ (Cash)</option>
+                                            <option value="KHQR">KHQR / បាគង (Bakong)</option>
+                                            <option value="ធនាគារ">ធនាគារ (Bank Transfer)</option>
+                                        </select>
+                                    </div>
+                                    <div class="e02-col" style="flex: 1.3;">
+                                        <label class="e02-lbl">គណនី* :</label>
+                                        <select id="e03TabAccount" class="e02-select">
+                                            <option value="គណនីសាច់ប្រាក់ទទួលពីអតិថិជន">គណនីសាច់ប្រាក់ទទួលពីអតិថិជន</option>
+                                            <option value="ABA: 001 234 567 (អគ្គិសនី រតនគិរី)">ABA: 001 234 567 (អគ្គិសនី រតនគិរី)</option>
+                                            <option value="Canadia: 005 888 999">Canadia: 005 888 999</option>
+                                            <option value="ACLEDA: 110 334 556">ACLEDA: 110 334 556</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Section 2: Unpaid Invoices Table (Matching E03.jpg) -->
+                            <fieldset class="e02-group-box">
+                                <legend class="e02-group-title">វិក្កយបត្រត្រូវទូទាត់</legend>
+                                <div class="e03-table-wrap">
+                                    <table class="e03-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 40px; text-align: center;"><input type="checkbox" id="e03TabSelectAll" onchange="toggleSelectAllE03Tab(this.checked)" checked></th>
+                                                <th>លេខវិក្កយបត្រ</th>
+                                                <th>កាលបរិច្ឆេទ</th>
+                                                <th>បរិយាយ (kWh)</th>
+                                                <th style="text-align: right;">សរុប (៛)</th>
+                                                <th style="text-align: right;">បង្គត់ (៛)</th>
+                                                <th style="text-align: right;">ជំពាក់ (៛)</th>
+                                                <th>ស្ថានភាព</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="e03TabInvoiceList">
+                                            <tr>
+                                                <td colspan="8" class="text-center" style="padding: 22px; color: #64748b;">
+                                                    សូមជ្រើសរើសអតិថិជនដើម្បីទាញយកបញ្ជីវិក្កយបត្រត្រូវទូទាត់
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="e03-meta-bar">
+                                    <div class="e03-meta-left">
+                                        <span>ថ្ងៃបង់ប្រាក់: <strong id="e03TabDateDisplay">--</strong></span>
+                                        <span class="mx-2">|</span>
+                                        <span>បេឡាករ: <strong id="e03TabCashierDisplay">Sokleng / admin</strong></span>
+                                    </div>
+                                    <div class="e03-meta-right">
+                                        <button type="button" class="e02-btn-secondary" onclick="refreshE03TabCustomerInvoices()">🔄 ផ្ទៀងផ្ទាត់ទឹកប្រាក់ជំពាក់</button>
+                                        <label class="e02-chk-label ml-3">
+                                            <input type="checkbox" id="e03TabAutoPrint" checked class="e01-chk">
+                                            <span>🖨️ បោះពុម្ពបង្កាន់ដៃភ្លាមៗ</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <!-- Section 3: Financial Summary Panel (Matching E03.jpg) -->
+                            <div class="e03-calc-panel">
+                                <div class="e03-calc-col">
+                                    <span class="e03-calc-title">ប្រាក់តម្កល់បច្ចុប្បន្ន :</span>
+                                    <div class="e03-calc-val" style="color:#64748b;" id="e03TabDepositDisplay">0 ៛</div>
+                                </div>
+                                <div class="e03-calc-col">
+                                    <span class="e03-calc-title">ទឹកប្រាក់សរុប (Total Due) :</span>
+                                    <div class="e03-calc-val text-red" id="e03TabTotalDueDisplay">0 ៛</div>
+                                </div>
+                                <div class="e03-calc-col">
+                                    <label class="e03-calc-title" for="e03TabAmountPaidInput">ទឹកប្រាក់បង់ (Paid Amount)* :</label>
+                                    <input type="number" id="e03TabAmountPaidInput" class="e03-amount-input" placeholder="0" oninput="calculateE03TabPayment()">
+                                </div>
+                                <div class="e03-calc-col">
+                                    <span class="e03-calc-title">ប្រាក់ជំពាក់ / អាប់ (Balance) :</span>
+                                    <div class="e03-calc-val text-emerald" id="e03TabBalanceDisplay">0 ៛</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer Action Buttons -->
+                        <div class="e01-footer" style="background:#e2e8f0; justify-content:space-between;">
+                            <div style="font-size:11.5px; color:#475569; display:flex; align-items:center;">
+                                <span>💡 ជ្រើសរើសអតិថិជន រួចពិនិត្យវិក្កយបត្រ និងចុច <strong>"យល់ព្រម"</strong> ដើម្បីបង់ប្រាក់</span>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <button type="button" class="e01-btn e01-btn-primary" id="btnConfirmE03Tab" onclick="handleSaveE03TabPayment()" style="background:#16a34a; border-color:#15803d; font-size:12.5px; padding:0 20px;">
+                                    ✔️ យល់ព្រម (បង់ប្រាក់)
+                                </button>
+                                <button type="button" class="e01-btn e01-btn-close-action" onclick="resetE03TabForm()">
+                                    🔄 សម្អាតទម្រង់
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom List: List ទទួលទិន្នន័យពី Form (Payments History Table) -->
+                    <div class="section-toolbar mt-4">
+                        <div class="toolbar-info">
+                            <h3>📋 តារាងទិន្នន័យបង់ប្រាក់ទទួលបានពី Form (Payments List)</h3>
+                            <p>បញ្ជីរាយនាមប្រតិបត្តិការដែលបានទូទាត់ជោគជ័យ និងទទួលបានទិន្នន័យពី Form ខាងលើ</p>
+                        </div>
+                        <div class="toolbar-controls">
+                            <div class="search-input-wrap">
+                                <input type="text" id="paymentSearchInput" placeholder="វាយបញ្ចូលដើម្បីស្វែងរក (លេខបង្កាន់ដៃ, អតិថិជន)..." oninput="handlePaymentInputSearch()" onkeydown="handlePaymentSearchKeyDown(event)">
+                                <button type="button" id="btnPaymentSearchClear" onclick="clearPaymentSearch()" title="សម្អាត" class="btn-search-clear" style="display:none;">&times;</button>
+                                <button type="button" class="btn-search" onclick="doPaymentSearch()"><span>🔍</span> ស្វែងរក</button>
+                            </div>
+                            <button class="btn btn-action-green" onclick="loadPaymentsTable()" title="ទាញយកឡើងវិញ">
+                                🔄 ផ្ទុកឡើងវិញ
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dark-panel">
+                        <div class="table-scroll">
+                            <table class="dark-table">
+                                <thead>
+                                    <tr>
+                                        <th>លេខបង្កាន់ដៃ</th>
+                                        <th>កាលបរិច្ឆេទ</th>
+                                        <th>អតិថិជន</th>
+                                        <th>ចំនួនវិក្កយបត្រ</th>
+                                        <th>វិធីបង់ប្រាក់</th>
+                                        <th>ទឹកប្រាក់បង់</th>
+                                        <th>បេឡាករ</th>
+                                        <th>ស្ថានភាព</th>
+                                        <th>សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentsTableBody">
+                                    <tr><td colspan="9" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 6: RECEIPTS (E04) ==================== -->
+                <section id="tab-receipts" class="tab-content">
+                    <div class="section-toolbar">
+                        <div class="toolbar-info">
+                            <h2>បោះពុម្ពបង្កាន់ដៃ (Print Receipts - E04)</h2>
+                            <p>ស្វែងរក និងបោះពុម្ពបង្កាន់ដៃផ្លូវការរបស់ អាជីវកម្ម អគ្គិសនី រតនគិរី</p>
+                        </div>
+                        <div class="toolbar-controls">
+                            <div class="search-input-wrap">
+                                <input type="text" id="receiptSearchInput" placeholder="ស្វែងរកតាមលេខបង្កាន់ដៃ ឬឈ្មោះ..." oninput="handleReceiptInputSearch()">
+                                <button type="button" class="btn-search" onclick="doReceiptSearch()"><span>🔍</span> ស្វែងរក</button>
+                            </div>
+                            <button class="btn btn-action-blue" onclick="openE04Modal()">
+                                🖨️ បើកផ្ទាំងបោះពុម្ព (E04)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dark-panel">
+                        <div class="table-scroll">
+                            <table class="dark-table">
+                                <thead>
+                                    <tr>
+                                        <th>លេខបង្កាន់ដៃ</th>
+                                        <th>កាលបរិច្ឆេទ</th>
+                                        <th>អតិថិជន</th>
+                                        <th>លេខកុងទ័រ</th>
+                                        <th>ទឹកប្រាក់ (៛)</th>
+                                        <th>វិធីបង់ប្រាក់</th>
+                                        <th>បេឡាករ</th>
+                                        <th>សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="receiptsTableBody">
+                                    <tr><td colspan="8" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==================== TAB 7: VOID PAYMENTS (E05) ==================== -->
+                <section id="tab-void_payments" class="tab-content">
+                    <div class="section-toolbar">
+                        <div class="toolbar-info">
+                            <h2>លុបការបង់ប្រាក់ (Void Payments - E05)</h2>
+                            <p>និរាករណ៍ប្រតិបត្តិការបង់ប្រាក់ និងផ្លាស់ប្តូរវិក្កយបត្រមកជា "មិនទាន់បង់" វិញ</p>
+                        </div>
+                        <div class="toolbar-controls">
+                            <button class="btn btn-action-red" onclick="openE05Modal()">
+                                🗑️ បើកផ្ទាំងលុបការបង់ប្រាក់ (E05)
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="dark-panel">
+                        <div class="table-scroll">
+                            <table class="dark-table">
+                                <thead>
+                                    <tr>
+                                        <th>លេខបង្កាន់ដៃ</th>
+                                        <th>កាលបរិច្ឆេទ</th>
+                                        <th>អតិថិជន</th>
+                                        <th>ទឹកប្រាក់ (៛)</th>
+                                        <th>បេឡាករ</th>
+                                        <th>ស្ថានភាព</th>
+                                        <th>មូលហេតុលុប</th>
+                                        <th>សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="voidPaymentsTableBody">
+                                    <tr><td colspan="8" class="text-center">កំពុងទាញយកទិន្នន័យ...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== MODAL: ADD CUSTOMER (EXACT E01 TEMPLATE) ==================== -->
+    <div class="modal" id="modalCustomer">
+        <div class="e01-dialog-card">
+            <!-- Window Title Bar -->
+            <div class="e01-title-bar">
+                <span class="e01-title-text" id="modalCustomerTitle">បន្ថែមអតិថិជន</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalCustomer')" title="បិទ">&times;</button>
+            </div>
+
+            <!-- Tab Headers with Integrated Search -->
+            <div class="e01-tabs-header">
+                <div class="e01-tabs-left">
+                    <button type="button" class="e01-tab-btn active" id="e01TabGeneralBtn" onclick="switchCustomerTab('general')">ព័ត៌មានទូទៅ</button>
+                    <button type="button" class="e01-tab-btn" id="e01TabUsageBtn" onclick="switchCustomerTab('usage')">ព័ត៌មានការប្រើប្រាស់</button>
+                </div>
+                <div class="e01-tab-search-box">
+                    <div class="e01-search-input-wrap">
+                        <span class="e01-search-prefix">🔍</span>
+                        <input type="text" id="e01CustomerSearchInput" placeholder="ស្វែងរកអតិថិជន (កូដ, ឈ្មោះ, ទូរស័ព្ទ, កុងទ័រ)..." oninput="handleE01SearchInput()" onkeydown="handleE01SearchKeyDown(event)" autocomplete="off">
+                        <button type="button" id="btnE01SearchClear" class="e01-search-clear" onclick="clearE01Search()" style="display:none;" title="សម្អាត">&times;</button>
+                    </div>
+                    <button type="button" class="e01-btn-new-cust" onclick="resetCustomerFormToNew()" title="ចុះឈ្មោះអតិថិជនថ្មី">+ ចុះឈ្មោះថ្មី</button>
+                    <div id="e01SearchDropdown" class="e01-search-dropdown" style="display:none;"></div>
+                </div>
+            </div>
+
+            <form id="formCustomer" onsubmit="handleSaveCustomer(event)">
+                <div class="e01-body">
+                    <!-- Tab 1: ព័ត៌មានទូទៅ -->
+                    <div id="e01TabGeneral" class="e01-tab-panel">
+                        <!-- Top Half: 3 Columns (Left Fields, Middle Fields, Right Photo) -->
+                        <div class="e01-top-grid">
+                            <!-- Left Column -->
+                            <div class="e01-field-col">
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ងារ<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custHonorific" class="e01-select">
+                                        <option value="លោក">លោក</option>
+                                        <option value="លោកស្រី">លោកស្រី</option>
+                                        <option value="កញ្ញា">កញ្ញា</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">គោត្តនាម<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custLastName" class="e01-input" required placeholder="" oninput="syncFullName()">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">នាម</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custFirstName" class="e01-input" placeholder="" oninput="syncFullName()">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ថ្ងៃខែឆ្នាំកំណើត</label>
+                                    <span class="e01-colon">:</span>
+                                    <div class="e01-dob-wrap">
+                                        <input type="checkbox" id="custDobEnable" checked class="e01-chk">
+                                        <input type="date" id="custDob" class="e01-input" value="1990-01-01">
+                                    </div>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">កន្លែងកំណើត</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custPob" class="e01-input" placeholder="">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ប្រភេទអត្តសញ្ញាណ</label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custIdType" class="e01-select">
+                                        <option value="អត្តសញ្ញាណប័ណ្ណ">អត្តសញ្ញាណប័ណ្ណ</option>
+                                        <option value="សៀវភៅគ្រួសារ">សៀវភៅគ្រួសារ</option>
+                                        <option value="លិខិតឆ្លងដែន">លិខិតឆ្លងដែន</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">អត្តសញ្ញាណ<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custNationalId" class="e01-input" placeholder="">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">អ្នកតំណាង</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custRepresentative" class="e01-input" placeholder="">
+                                </div>
+                            </div>
+
+                            <!-- Middle Column -->
+                            <div class="e01-field-col">
+                                <div class="e01-row">
+                                    <label class="e01-lbl">លេខកូដ<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <div style="display:flex; flex:1; gap:3px; align-items:center;">
+                                        <input type="text" id="custID" name="customer_id" class="e01-input e01-readonly" readonly required>
+                                        <button type="button" class="e01-btn-inline-search" onclick="focusE01Search()" title="ស្វែងរកអតិថិជន">🔍</button>
+                                    </div>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">គោត្តនាមឡាតាំង</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custLastNameEn" class="e01-input" placeholder="">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">នាមឡាតាំង</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custFirstNameEn" class="e01-input" placeholder="">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ភេទ<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custGender" class="e01-select">
+                                        <option value="ប្រុស">ប្រុស</option>
+                                        <option value="ស្រី">ស្រី</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">មុខរបរ</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custJob" class="e01-input" placeholder="">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ចំនួនគ្រួសារ<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="number" id="custFamilyCount" class="e01-input" value="1" min="1">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ប្រភេទអតិថិជន<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custType" class="e01-select">
+                                        <option value="បុគ្គលមិនជាប់អាករ">បុគ្គលមិនជាប់អាករ</option>
+                                        <option value="បុគ្គលជាប់អាករ">បុគ្គលជាប់អាករ</option>
+                                        <option value="អាជីវកម្ម">អាជីវកម្ម</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl"></label>
+                                    <span class="e01-colon"></span>
+                                    <label class="e01-chk-lbl">
+                                        <input type="checkbox" id="custIsPoor" class="e01-chk"> គ្រួសារក្រីក្រ
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Photo Frame -->
+                            <div class="e01-photo-col">
+                                <div class="e01-photo-frame" onclick="document.getElementById('custPhotoInput').click()" title="ចុចដើម្បីដាក់រូបថត">
+                                    <img id="custPhotoPreview" src="" style="display:none; width:100%; height:100%; object-fit:cover;">
+                                    <div id="custPhotoPlaceholder" class="e01-photo-inner">
+                                        <span style="font-size:38px; opacity:0.35;">👤</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="custPhotoInput" accept="image/*" style="display:none" onchange="previewCustPhoto(event)">
+                                <span class="e01-photo-caption" onclick="document.getElementById('custPhotoInput').click()">រូបថត</span>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Half: អាសយដ្ឋានទំនាក់ទំនង -->
+                        <div class="e01-section-title">អាសយដ្ឋានទំនាក់ទំនង</div>
+                        <div class="e01-bottom-grid">
+                            <!-- Left Sub-column -->
+                            <div class="e01-field-col">
+                                <div class="e01-row">
+                                    <label class="e01-lbl">លេខទូរស័ព្ទ<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="tel" id="custPhone" name="phone" class="e01-input" placeholder="012 345 678" required>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">លេខគណនី</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custAccountNo" class="e01-input" placeholder="">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ខេត្ត/រាជធានី<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custProvince" class="e01-select" onchange="updateFullAddress()">
+                                        <option value="រតនគិរី" selected>រតនគិរី</option>
+                                        <option value="ភ្នំពេញ">ភ្នំពេញ</option>
+                                        <option value="កណ្តាល">កណ្តាល</option>
+                                        <option value="សៀមរាប">សៀមរាប</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ស្រុក/ក្រុង<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custDistrict" class="e01-select" onchange="updateFullAddress()">
+                                        <option value="បានលុង" selected>បានលុង</option>
+                                        <option value="លំផាត់">លំផាត់</option>
+                                        <option value="តាវែង">តាវែង</option>
+                                        <option value="អណ្តូងមាស">អណ្តូងមាស</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ឃុំ/សង្កាត់<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custCommune" class="e01-select" onchange="updateFullAddress()">
+                                        <option value="កាចាញ" selected>កាចាញ</option>
+                                        <option value="ឡាបានសៀក">ឡាបានសៀក</option>
+                                        <option value="យក្ខឡោម">យក្ខឡោម</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ភូមិ/ក្រុម<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custVillage" class="e01-select" onchange="updateFullAddress()">
+                                        <option value="ភូមិ ២" selected>ភូមិ ២</option>
+                                        <option value="ភូមិ ១">ភូមិ ១</option>
+                                        <option value="ភូមិ ៣">ភូមិ ៣</option>
+                                        <option value="ភូមិ ៤">ភូមិ ៤</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Right Sub-column -->
+                            <div class="e01-field-col">
+                                <div class="e01-row">
+                                    <label class="e01-lbl">តំបន់<span class="req-star">*</span></label>
+                                    <span class="e01-colon">:</span>
+                                    <select id="custZone" class="e01-select">
+                                        <option value="តំបន់ បានលុង" selected>បានលុង</option>
+                                        <option value="តំបន់ ១">តំបន់ ១</option>
+                                        <option value="តំបន់ ២">តំបន់ ២</option>
+                                    </select>
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ផ្ទះលេខ</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custHouseNo" class="e01-input" placeholder="" oninput="updateFullAddress()">
+                                </div>
+                                <div class="e01-row">
+                                    <label class="e01-lbl">ផ្លូវលេខ</label>
+                                    <span class="e01-colon">:</span>
+                                    <input type="text" id="custStreetNo" class="e01-input" placeholder="" oninput="updateFullAddress()">
+                                </div>
+                                <div class="e01-row" style="align-items: flex-start;">
+                                    <label class="e01-lbl" style="padding-top:4px;">អាសយដ្ឋាន</label>
+                                    <span class="e01-colon" style="padding-top:4px;">:</span>
+                                    <textarea id="custAddress" name="address" class="e01-textarea" rows="3">ភូមិ ២ សង្កាត់ កាចាញ ក្រុង បានលុង ខេត្តរតនគិរី</textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: ព័ត៌មានការប្រើប្រាស់ -->
+                    <div id="e01TabUsage" class="e01-tab-panel" style="display:none;">
+                        <div class="e01-usage-grid">
+                            <div class="e01-row">
+                                <label class="e01-lbl">លេខកុងទ័រ (Meter ID)<span class="req-star">*</span></label>
+                                <span class="e01-colon">:</span>
+                                <input type="text" id="custMeter" name="meter_number" class="e01-input" placeholder="ឧទាហរណ៍៖ MTR-1006" required>
+                            </div>
+                            <div class="e01-row">
+                                <label class="e01-lbl">នាឡិកាស្ទង់</label>
+                                <span class="e01-colon">:</span>
+                                <select id="custMeterType" class="e01-select">
+                                    <option value="1-Phase (ធម្មតា 220V)" selected>1-Phase (ធម្មតា 220V)</option>
+                                    <option value="3-Phase (ឧស្សាហកម្ម 380V)">3-Phase (ឧស្សាហកម្ម 380V)</option>
+                                </select>
+                            </div>
+                            <div class="e01-row">
+                                <label class="e01-lbl">អំណានចាស់</label>
+                                <span class="e01-colon">:</span>
+                                <input type="number" id="custInitialOldReading" class="e01-input" value="0.0" step="0.1">
+                            </div>
+                            <div class="e01-row">
+                                <label class="e01-lbl">មេគុណ</label>
+                                <span class="e01-colon">:</span>
+                                <input type="number" id="custMeterMultiplier" class="e01-input" value="1" readonly style="background:#e5e7eb;">
+                            </div>
+                            <div class="e01-row">
+                                <label class="e01-lbl">ថ្ងៃចុះឈ្មោះ<span class="req-star">*</span></label>
+                                <span class="e01-colon">:</span>
+                                <input type="date" id="custDate" name="registered_date" class="e01-input">
+                            </div>
+                            <div class="e01-row">
+                                <label class="e01-lbl">តម្លៃក្នុង ១ kWh</label>
+                                <span class="e01-colon">:</span>
+                                <input type="text" class="e01-input" value="800 ៛" readonly style="background:#e5e7eb; font-weight:700; color:#0284c7;">
+                            </div>
+                        </div>
+
+                        <!-- Usage History & Readings Table -->
+                        <div class="e01-history-section">
+                            <div class="e01-section-title" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <span>ប្រវត្តិកត់ត្រាកុងទ័រ & ថាមពលប្រើប្រាស់</span>
+                                <span id="e01UsageCountBadge" style="font-size:11px; font-weight:normal; color:#64748b;">(0 កំណត់ត្រា)</span>
+                            </div>
+                            <div class="e01-history-table-scroll">
+                                <table class="e01-mini-table">
+                                    <thead>
+                                        <tr>
+                                            <th>កូដកត់ត្រា</th>
+                                            <th>ខែ/ឆ្នាំ</th>
+                                            <th>លេខចាស់</th>
+                                            <th>លេខថ្មី</th>
+                                            <th>ថាមពល (kWh)</th>
+                                            <th>ទឹកប្រាក់</th>
+                                            <th>ស្ថានភាព</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="e01UsageHistoryBody">
+                                        <tr><td colspan="7" class="text-center" style="color:#94a3b8; padding:14px;">ជ្រើសរើសអតិថិជន ឬបញ្ចូលទិន្នន័យដើម្បីមើលប្រវត្តិ</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden full name input for backend compat -->
+                <input type="hidden" id="custName" name="name">
+
+                <!-- Dialog Bottom Bar -->
+                <div class="e01-footer">
+                    <button type="submit" class="e01-btn e01-btn-primary" id="btnSaveCustomer">រក្សាទុក</button>
+                    <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalCustomer')">បិទ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: CUSTOMER FULL DETAILS ==================== -->
+    <div class="modal" id="modalCustomerDetail">
+        <div class="e01-dialog-card" style="max-width: 780px;">
+            <div class="e01-title-bar">
+                <span class="e01-title-text" id="detailCustomerTitle">ព័ត៌មានលម្អិតអតិថិជន</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalCustomerDetail')">&times;</button>
+            </div>
+            <div class="e01-body" id="customerDetailContent" style="padding: 16px;">
+                <!-- Filled dynamically by JavaScript -->
+            </div>
+            <div class="e01-footer">
+                <button type="button" class="e01-btn e01-btn-primary" id="btnDetailRecordReading">⚡ កត់ត្រាភ្លើង</button>
+                <button type="button" class="e01-btn" id="btnDetailEdit" style="background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc;">✏️ កែប្រែ</button>
+                <button type="button" class="e01-btn" id="btnDetailDelete" style="background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5;">🗑️ លុប</button>
+                <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalCustomerDetail')">បិទ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: RECORD METER READING ==================== -->
+    <div class="modal" id="modalReading">
+        <div class="modal-card modal-card-lg">
+            <div class="modal-top">
+                <div class="modal-header-title">
+                    <span class="icon">⚡</span>
+                    <h3>កត់ត្រាការប្រើប្រាស់ភ្លើង (Meter Reading)</h3>
+                </div>
+                <button class="btn-close" onclick="closeModal('modalReading')">&times;</button>
+            </div>
+            <form id="formReading" onsubmit="handleSaveReading(event)">
+                <div class="modal-content-body">
+                    <div class="form-grid-2">
+                        <div class="field-box">
+                            <label for="readID">លេខកូដកត់ត្រា (ReadingID)</label>
+                            <input type="text" id="readID" name="reading_id" readonly>
+                        </div>
+                        <div class="field-box">
+                            <label for="readMonthYear">ខែ/ឆ្នាំ (Month/Year) *</label>
+                            <input type="text" id="readMonthYear" name="month_year" required placeholder="09/2026">
+                        </div>
+                    </div>
+
+                    <div class="field-box">
+                        <label for="readCustomer">ជ្រើសរើសអតិថិជន (Customer) *</label>
+                        <select id="readCustomer" name="customer_id" required onchange="handleSelectCustomerForReading(this.value)">
+                            <option value="">-- សូមជ្រើសរើសអតិថិជន --</option>
+                        </select>
+                        <div class="customer-preview-box" id="custPreviewBox" style="display: none;">
+                            <div><strong>លេខកុងទ័រ:</strong> <span id="previewMeter">-</span></div>
+                            <div><strong>លេខកត់ត្រាចុងក្រោយ:</strong> <span id="previewLastReading">0 kWh</span></div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid-2">
+                        <div class="field-box">
+                            <label for="readOld">លេខកុងទ័រចាស់ (kWh) *</label>
+                            <input type="number" step="0.1" id="readOld" name="old_reading" required oninput="calculateLiveUnits()">
+                            <small class="hint-text">ទាញយកពីលេខថ្មីលើកមុនដោយស្វ័យប្រវត្តិ</small>
+                        </div>
+                        <div class="field-box">
+                            <label for="readNew">លេខកុងទ័រថ្មី (kWh) *</label>
+                            <input type="number" step="0.1" id="readNew" name="new_reading" required oninput="calculateLiveUnits()" placeholder="ឧទាហរណ៍៖ 1550">
+                        </div>
+                    </div>
+
+                    <!-- Live Calculation Dark Glow Card -->
+                    <div class="calc-glow-box">
+                        <div class="calc-col">
+                            <span class="calc-label">ថាមពលប្រើសរុប (TotalUnits):</span>
+                            <div class="calc-number"><span id="liveTotalUnits">0.00</span> <small>kWh</small></div>
+                            <span class="calc-sub">= លេខថ្មី - លេខចាស់</span>
+                        </div>
+                        <div class="calc-sign">&times;</div>
+                        <div class="calc-col">
+                            <span class="calc-label">តម្លៃក្នុង ១ kWh:</span>
+                            <div class="calc-number"><span id="liveRateDisplay">800</span> <small>៛</small></div>
+                            <span class="calc-sub">អត្រាថាមពល</span>
+                        </div>
+                        <div class="calc-sign">=</div>
+                        <div class="calc-col calc-highlight">
+                            <span class="calc-label">ទឹកប្រាក់សរុប (TotalAmount):</span>
+                            <div class="calc-number text-emerald"><span id="liveTotalAmount">0</span> <small>៛</small></div>
+                            <span class="calc-sub">ស្មើប្រហែល <span id="liveUsdAmount">$0.00</span></span>
+                        </div>
+                    </div>
+
+                    <div class="invoice-opt-box">
+                        <label class="check-container">
+                            <input type="checkbox" id="autoInvoiceCheck" checked onchange="toggleInvoiceOptions(this.checked)">
+                            <span><strong>ចេញវិក្កយបត្រភ្លាមៗដោយស្វ័យប្រវត្តិ (Auto-generate Invoice)</strong></span>
+                        </label>
+                        <div class="form-grid-2 mt-3" id="invoiceOptionsRow">
+                            <div class="field-box">
+                                <label for="ratePerUnit">តម្លៃក្នុង ១ kWh (រៀល)</label>
+                                <input type="number" id="ratePerUnit" name="rate_per_unit" value="800" oninput="updateRate(this.value)">
+                            </div>
+                            <div class="field-box">
+                                <label for="dueDate">ថ្ងៃផុតកំណត់បង់ប្រាក់ (DueDate)</label>
+                                <input type="date" id="dueDate" name="due_date">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-bottom">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal('modalReading')">បោះបង់</button>
+                    <button type="submit" class="btn btn-action-blue" id="btnSaveReading">⚡ រក្សាទុក & ចេញវិក្កយបត្រ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: E02 METER READING (EXACT E02 REPLICA) ==================== -->
+    <div class="modal" id="modalE02Reading">
+        <div class="e02-dialog-card">
+            <!-- Window Title Bar -->
+            <div class="e01-title-bar">
+                <span class="e01-title-text">បញ្ចូលការប្រើប្រាស់ (E02)</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalE02Reading')" title="បិទ">&times;</button>
+            </div>
+
+            <form id="formE02Reading" onsubmit="handleSaveE02Reading(event)">
+                <div class="e02-body">
+                    <!-- Section 1: អតិថិជន (Customer Group Box) -->
+                    <fieldset class="e02-group-box">
+                        <legend class="e02-group-title">អតិថិជន</legend>
+                        <div class="e02-grid-row">
+                            <div class="e02-col">
+                                <label class="e02-lbl">កូដ :</label>
+                                <div class="e02-input-picker">
+                                    <input type="text" id="e02CustID" name="customer_id" class="e02-input e01-readonly" readonly required placeholder="ជ្រើសរើស...">
+                                    <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E02')" title="ស្វែងរកអតិថិជន">🔍</button>
+                                </div>
+                            </div>
+                            <div class="e02-col" style="flex: 1.5;">
+                                <label class="e02-lbl">ឈ្មោះ :</label>
+                                <div class="e02-input-picker">
+                                    <input type="text" id="e02CustName" class="e02-input e01-readonly" readonly placeholder="ឈ្មោះអតិថិជន">
+                                    <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E02')">🔍</button>
+                                </div>
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">កុងទ័រ :</label>
+                                <div class="e02-input-picker">
+                                    <input type="text" id="e02MeterID" class="e02-input e01-readonly" readonly placeholder="លេខកុងទ័រ">
+                                    <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E02')">🔍</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="e02-grid-row mt-2">
+                            <div class="e02-col">
+                                <label class="e02-lbl">តំបន់ :</label>
+                                <input type="text" id="e02Zone" class="e02-input e01-readonly" readonly value="តំបន់ទី១">
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">ផ្លូវ :</label>
+                                <input type="text" id="e02Street" class="e02-input e01-readonly" readonly value="ផ្លូវធំ">
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">ទីតាំង :</label>
+                                <input type="text" id="e02Location" class="e02-input e01-readonly" readonly placeholder="ទីតាំង">
+                            </div>
+                            <div class="e02-col-auto">
+                                <label class="e02-chk-label">
+                                    <input type="checkbox" id="e02NextCustomerAuto" checked class="e01-chk">
+                                    <span>បន្តទៅអតិថិជនបន្ទាប់</span>
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Section 2: ព័ត៌មានការប្រើប្រាស់ (Usage Information Group Box) -->
+                    <fieldset class="e02-group-box">
+                        <legend class="e02-group-title">ព័ត៌មានការប្រើប្រាស់</legend>
+                        <div class="e02-grid-row">
+                            <div class="e02-col">
+                                <label class="e02-lbl">វដ្ត :</label>
+                                <select id="e02BillingCycle" class="e02-select">
+                                    <option value="1">1 - វដ្តទី១ (Cycle 1)</option>
+                                    <option value="2">2 - វដ្តទី២ (Cycle 2)</option>
+                                    <option value="3">3 - វដ្តទី៣ (Cycle 3)</option>
+                                </select>
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">ប្រភេទកុងទ័រ :</label>
+                                <select id="e02MeterType" class="e02-select">
+                                    <option value="1P">1P - 1 ហ្វា (Single Phase)</option>
+                                    <option value="3P">3P - 3 ហ្វា (Three Phase)</option>
+                                </select>
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">អ្នកកត់ត្រា :</label>
+                                <input type="text" id="e02RecordedBy" class="e02-input" value="admin">
+                            </div>
+                        </div>
+
+                        <div class="e02-grid-row mt-2">
+                            <div class="e02-col">
+                                <label class="e02-lbl">ខែ/ឆ្នាំ :</label>
+                                <input type="text" id="e02MonthYear" class="e02-input" placeholder="09/2026" required>
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">កាលបរិច្ឆេទ ពី :</label>
+                                <input type="date" id="e02DateFrom" class="e02-input">
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">ដល់ :</label>
+                                <input type="date" id="e02DateTo" class="e02-input">
+                            </div>
+                        </div>
+
+                        <div class="e02-grid-row mt-2">
+                            <div class="e02-col">
+                                <label class="e02-lbl">លេខចាស់ :</label>
+                                <input type="number" step="0.1" id="e02OldReading" class="e02-input e01-readonly" readonly value="0">
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">លេខថ្មី<span class="req-star">*</span> :</label>
+                                <input type="number" step="0.1" id="e02NewReading" class="e02-input e02-input-active" required oninput="calculateE02Units()">
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">មេគុណ :</label>
+                                <input type="number" step="1" id="e02Multiplier" class="e02-input" value="1" oninput="calculateE02Units()">
+                            </div>
+                            <div class="e02-col">
+                                <label class="e02-lbl">ប្រើប្រាស់សរុប :</label>
+                                <input type="number" step="0.1" id="e02TotalUnits" class="e02-input e02-units-display" readonly value="0">
+                            </div>
+                        </div>
+
+                        <div class="e02-flex-between mt-2">
+                            <label class="e02-chk-label">
+                                <input type="checkbox" id="e02MeterCycled" class="e01-chk" onchange="calculateE02Units()">
+                                <span style="color:#b45309; font-weight:600;">នាឡិកាស្ទង់វិលដល់ជុំថ្មី (Rollover 99999 &rarr; 0)</span>
+                            </label>
+                            <button type="button" class="e02-btn-secondary" onclick="showCustomerHistory()">📜 ប្រវត្តិប្រើប្រាស់</button>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div class="e02-footer">
+                    <div class="e02-footer-left">
+                        <button type="button" class="e02-btn e02-btn-util" onclick="showUnrecordedCustomersModal()">📋 អតិថិជនមិនទាន់ស្រង់</button>
+                        <button type="button" class="e02-btn e02-btn-util" onclick="showReviewReadingsModal()">🔍 អំណានត្រូវពិនិត្យ</button>
+                    </div>
+                    <div class="e02-footer-right">
+                        <button type="submit" class="e01-btn e01-btn-primary" id="btnSaveE02">💾 រក្សាទុក</button>
+                        <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalE02Reading')">បិទ</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: E03 PAYMENT (EXACT E03 REPLICA) ==================== -->
+    <div class="modal" id="modalE03Payment">
+        <div class="e03-dialog-card">
+            <!-- Window Title Bar -->
+            <div class="e01-title-bar">
+                <span class="e01-title-text">បង់ប្រាក់ (E03)</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalE03Payment')" title="បិទ">&times;</button>
+            </div>
+
+            <div class="e03-body">
+                <!-- Section 1: Customer & Payment Method Info -->
+                <fieldset class="e02-group-box">
+                    <legend class="e02-group-title">ព័ត៌មានអតិថិជន & ប្រព័ន្ធទូទាត់</legend>
+                    <div class="e02-grid-row">
+                        <div class="e02-col">
+                            <label class="e02-lbl">កូដអតិថិជន :</label>
+                            <div class="e02-input-picker">
+                                <input type="text" id="e03CustID" class="e02-input e01-readonly" readonly placeholder="ជ្រើសរើស...">
+                                <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E03')">🔍</button>
+                            </div>
+                        </div>
+                        <div class="e02-col" style="flex: 1.5;">
+                            <label class="e02-lbl">ឈ្មោះ :</label>
+                            <div class="e02-input-picker">
+                                <input type="text" id="e03CustName" class="e02-input e01-readonly" readonly placeholder="ឈ្មោះអតិថិជន">
+                                <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E03')">🔍</button>
+                            </div>
+                        </div>
+                        <div class="e02-col">
+                            <label class="e02-lbl">កុងទ័រ :</label>
+                            <div class="e02-input-picker">
+                                <input type="text" id="e03MeterID" class="e02-input e01-readonly" readonly placeholder="លេខកុងទ័រ">
+                                <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E03')">🔍</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="e02-grid-row mt-2">
+                        <div class="e02-col">
+                            <label class="e02-lbl">រូបិយប័ណ្ណ :</label>
+                            <select id="e03Currency" class="e02-select" onchange="calculateE03Payment()">
+                                <option value="KHR">KHR (៛) - ប្រាក់រៀល</option>
+                                <option value="USD">USD ($) - ដុល្លារអាមេរិក</option>
+                            </select>
+                        </div>
+                        <div class="e02-col">
+                            <label class="e02-lbl">វិធីបង់ប្រាក់ :</label>
+                            <select id="e03Method" class="e02-select" onchange="handleE03MethodChange()">
+                                <option value="សាច់ប្រាក់សុទ្ធ">សាច់ប្រាក់សុទ្ធ (Cash)</option>
+                                <option value="KHQR">KHQR / បាគង (Bakong)</option>
+                                <option value="ធនាគារ">ធនាគារ (Bank Transfer)</option>
+                            </select>
+                        </div>
+                        <div class="e02-col" style="flex: 1.2;">
+                            <label class="e02-lbl">គណនីបង់ :</label>
+                            <select id="e03Account" class="e02-select">
+                                <option value="បេឡាសាច់ប្រាក់">បេឡាសាច់ប្រាក់ (Cash Drawer)</option>
+                                <option value="ABA: 001 234 567">ABA: 001 234 567 (អគ្គិសនី រតនគិរី)</option>
+                                <option value="Canadia: 005 888 999">Canadia: 005 888 999</option>
+                                <option value="ACLEDA: 110 334 556">ACLEDA: 110 334 556</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Section 2: Unpaid Invoices Table -->
+                <fieldset class="e02-group-box">
+                    <legend class="e02-group-title">បញ្ជីវិក្កយបត្រមិនទាន់បង់</legend>
+                    <div class="e03-table-wrap">
+                        <table class="e03-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align: center;"><input type="checkbox" id="e03SelectAll" onchange="toggleSelectAllE03(this.checked)"></th>
+                                    <th>លេខវិក្កយបត្រ</th>
+                                    <th>ខែ/ឆ្នាំ</th>
+                                    <th style="text-align: right;">ថាមពល (kWh)</th>
+                                    <th style="text-align: right;">ទឹកប្រាក់ (រៀល)</th>
+                                    <th>ថ្ងៃផុតកំណត់</th>
+                                    <th>ស្ថានភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody id="e03InvoiceList">
+                                <tr>
+                                    <td colspan="7" class="text-center" style="padding: 24px; color: #64748b;">
+                                        សូមជ្រើសរើសអតិថិជនដើម្បីមើលបញ្ជីវិក្កយបត្រជំពាក់
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="e03-meta-bar">
+                        <div class="e03-meta-left">
+                            <span>កាលបរិច្ឆេទ: <strong id="e03DateDisplay">--</strong></span>
+                            <span class="mx-2">|</span>
+                            <span>បេឡាករ: <strong>admin</strong></span>
+                        </div>
+                        <div class="e03-meta-right">
+                            <button type="button" class="e02-btn-secondary" onclick="refreshE03CustomerInvoices()">🔄 ផ្ទៀងផ្ទាត់ទឹកប្រាក់ជំពាក់</button>
+                            <label class="e02-chk-label ml-3">
+                                <input type="checkbox" id="e03AutoPrint" checked class="e01-chk">
+                                <span>🖨️ បោះពុម្ពបង្កាន់ដៃភ្លាមៗ</span>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Section 3: Financial Summary -->
+                <div class="e03-calc-panel">
+                    <div class="e03-calc-col">
+                        <span class="e03-calc-title">ទឹកប្រាក់ជំពាក់សរុប (Due) :</span>
+                        <div class="e03-calc-val text-red" id="e03TotalDueDisplay">0 ៛</div>
+                    </div>
+                    <div class="e03-calc-col">
+                        <label class="e03-calc-title" for="e03AmountPaidInput">ទឹកប្រាក់បានទទួល (Paid) :</label>
+                        <input type="number" id="e03AmountPaidInput" class="e03-amount-input" placeholder="0" oninput="calculateE03Payment()">
+                    </div>
+                    <div class="e03-calc-col">
+                        <span class="e03-calc-title">ប្រាក់អាប់ / នៅសល់ (Balance) :</span>
+                        <div class="e03-calc-val text-emerald" id="e03BalanceDisplay">0 ៛</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Action Buttons -->
+            <div class="e01-footer">
+                <button type="button" class="e01-btn e01-btn-primary" id="btnConfirmE03" onclick="handleSaveE03Payment()">✔️ យល់ព្រម (Confirm)</button>
+                <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalE03Payment')">បិទ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: E04 PRINT RECEIPT (EXACT E04 REPLICA) ==================== -->
+    <div class="modal" id="modalE04Receipt">
+        <div class="e04-dialog-card">
+            <!-- Window Title Bar -->
+            <div class="e01-title-bar">
+                <span class="e01-title-text">បោះពុម្ពបង្កាន់ដៃ (E04)</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalE04Receipt')" title="បិទ">&times;</button>
+            </div>
+
+            <div class="e04-body">
+                <!-- Search & Filters -->
+                <fieldset class="e02-group-box">
+                    <legend class="e02-group-title">ស្វែងរកបង្កាន់ដៃ</legend>
+                    <div class="e02-grid-row">
+                        <div class="e02-col">
+                            <label class="e02-lbl">កូដអតិថិជន :</label>
+                            <div class="e02-input-picker">
+                                <input type="text" id="e04CustID" class="e02-input" placeholder="ទាំងអស់" oninput="loadE04Receipts()">
+                                <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E04')">🔍</button>
+                            </div>
+                        </div>
+                        <div class="e02-col" style="flex: 1.5;">
+                            <label class="e02-lbl">ឈ្មោះអតិថិជន :</label>
+                            <input type="text" id="e04CustName" class="e02-input" placeholder="ស្វែងរកតាមឈ្មោះ..." oninput="loadE04Receipts()">
+                        </div>
+                        <div class="e02-col">
+                            <label class="e02-lbl">ខែ/ឆ្នាំ :</label>
+                            <input type="text" id="e04Month" class="e02-input" placeholder="ឧ. 09/2026" oninput="loadE04Receipts()">
+                        </div>
+                        <div class="e02-col-auto">
+                            <button type="button" class="e02-btn-secondary" onclick="loadE04Receipts()">🔍 ស្វែងរក</button>
+                            <button type="button" class="e02-btn-secondary ml-1" onclick="resetE04Filter()">🔄 ទាំងអស់</button>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Receipts Table -->
+                <fieldset class="e02-group-box">
+                    <legend class="e02-group-title">បញ្ជីបង្កាន់ដៃទូទាត់ប្រាក់</legend>
+                    <div class="e03-table-wrap">
+                        <table class="e03-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"></th>
+                                    <th>លេខបង្កាន់ដៃ</th>
+                                    <th>កាលបរិច្ឆេទ</th>
+                                    <th>អតិថិជន</th>
+                                    <th>វិក្កយបត្រ</th>
+                                    <th style="text-align: right;">ទឹកប្រាក់សរុប (៛)</th>
+                                    <th>វិធីបង់ប្រាក់</th>
+                                    <th>បេឡាករ</th>
+                                    <th>សកម្មភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody id="e04ReceiptList">
+                                <tr>
+                                    <td colspan="9" class="text-center" style="padding: 24px; color: #64748b;">
+                                        កំពុងទាញយកទិន្នន័យ...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Footer Action Buttons -->
+            <div class="e01-footer">
+                <button type="button" class="e01-btn e01-btn-primary" id="btnPrintSelectedE04" onclick="printSelectedE04Receipt()">🖨️ បោះពុម្ពបង្កាន់ដៃ</button>
+                <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalE04Receipt')">បិទ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: E05 VOID PAYMENT (EXACT E05 REPLICA) ==================== -->
+    <div class="modal" id="modalE05VoidPayment">
+        <div class="e05-dialog-card">
+            <!-- Window Title Bar -->
+            <div class="e01-title-bar" style="background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%);">
+                <span class="e01-title-text">លុបការបង់ប្រាក់ (E05)</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalE05VoidPayment')" title="បិទ">&times;</button>
+            </div>
+
+            <div class="e05-body">
+                <!-- Search & Filters -->
+                <fieldset class="e02-group-box">
+                    <legend class="e02-group-title">ស្វែងរកប្រតិបត្តិការដែលចង់លុប</legend>
+                    <div class="e02-grid-row">
+                        <div class="e02-col">
+                            <label class="e02-lbl">កូដអតិថិជន :</label>
+                            <div class="e02-input-picker">
+                                <input type="text" id="e05CustID" class="e02-input" placeholder="ទាំងអស់" oninput="loadE05Receipts()">
+                                <button type="button" class="e02-btn-picker" onclick="openCustomerPickerFor('E05')">🔍</button>
+                            </div>
+                        </div>
+                        <div class="e02-col" style="flex: 1.5;">
+                            <label class="e02-lbl">ឈ្មោះអតិថិជន :</label>
+                            <input type="text" id="e05CustName" class="e02-input" placeholder="ស្វែងរកតាមឈ្មោះ..." oninput="loadE05Receipts()">
+                        </div>
+                        <div class="e02-col-auto">
+                            <button type="button" class="e02-btn-secondary" onclick="loadE05Receipts()">🔍 ស្វែងរក</button>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Transactions Table -->
+                <fieldset class="e02-group-box">
+                    <legend class="e02-group-title">ជ្រើសរើសបង្កាន់ដៃដែលត្រូវនិរាករណ៍ (លុប)</legend>
+                    <div class="e03-table-wrap">
+                        <table class="e03-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px; text-align: center;">ជ្រើស</th>
+                                    <th>លេខបង្កាន់ដៃ</th>
+                                    <th>កាលបរិច្ឆេទ</th>
+                                    <th>អតិថិជន</th>
+                                    <th>វិក្កយបត្រ</th>
+                                    <th style="text-align: right;">ទឹកប្រាក់ (៛)</th>
+                                    <th>បេឡាករ</th>
+                                    <th>ស្ថានភាព</th>
+                                </tr>
+                            </thead>
+                            <tbody id="e05PaymentList">
+                                <tr>
+                                    <td colspan="8" class="text-center" style="padding: 24px; color: #64748b;">
+                                        កំពុងទាញយកទិន្នន័យ...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </fieldset>
+
+                <!-- Reason for Void -->
+                <fieldset class="e02-group-box" style="border-color: #fca5a5;">
+                    <legend class="e02-group-title" style="color: #b91c1c;">មូលហេតុនៃការលុប (Void Reason)</legend>
+                    <div class="mb-2">
+                        <select id="e05QuickReason" class="e02-select" onchange="document.getElementById('e05VoidReason').value = this.value">
+                            <option value="">-- ជ្រើសរើសមូលហេតុគំរូ --</option>
+                            <option value="បញ្ចូលទឹកប្រាក់ច្រឡំ (Incorrect Amount Recorded)">បញ្ចូលទឹកប្រាក់ច្រឡំ (Incorrect Amount Recorded)</option>
+                            <option value="ច្រឡំអតិថិជន ឬកុងទ័រ (Wrong Customer or Meter)">ច្រឡំអតិថិជន ឬកុងទ័រ (Wrong Customer or Meter)</option>
+                            <option value="អតិថិជនស្នើសុំប្តូរវិធីទូទាត់ (Customer Requested Method Change)">អតិថិជនស្នើសុំប្តូរវិធីទូទាត់ (Customer Requested Method Change)</option>
+                            <option value="ប្រតិបត្តិការស្ទួន (Duplicate Payment Recorded)">ប្រតិបត្តិការស្ទួន (Duplicate Payment Recorded)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <textarea id="e05VoidReason" class="e02-input" rows="2" style="width: 100%; height: 60px; font-family: inherit;" placeholder="សូមបញ្ជាក់មូលហេតុនៃការលុបប្រតិបត្តិការនេះ..."></textarea>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Footer Action Buttons -->
+            <div class="e01-footer">
+                <button type="button" class="e01-btn" style="background:#dc2626; color:#ffffff; border:1px solid #b91c1c;" id="btnConfirmVoidE05" onclick="handleVoidE05Payment()">🗑️ លុបការបង់ប្រាក់</button>
+                <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalE05VoidPayment')">បិទ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: UNIVERSAL CUSTOMER PICKER ==================== -->
+    <div class="modal" id="modalCustomerPicker">
+        <div class="e01-dialog-card" style="max-width: 820px;">
+            <div class="e01-title-bar">
+                <span class="e01-title-text">ស្វែងរក និងជ្រើសរើសអតិថិជន</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalCustomerPicker')">&times;</button>
+            </div>
+            <div class="e01-body" style="padding: 14px;">
+                <div class="e01-search-input-wrap mb-3" style="width: 100%;">
+                    <span class="e01-search-prefix">🔍</span>
+                    <input type="text" id="pickerSearchInput" placeholder="វាយបញ្ចូលដើម្បីស្វែងរក (កូដ, ឈ្មោះ, កុងទ័រ, ទូរស័ព្ទ, អាសយដ្ឋាន)..." oninput="filterCustomerPicker()" autocomplete="off" style="width: 100%; font-size: 14px;">
+                </div>
+                <div class="e03-table-wrap" style="max-height: 380px;">
+                    <table class="e03-table">
+                        <thead>
+                            <tr>
+                                <th>កូដ</th>
+                                <th>ឈ្មោះអតិថិជន</th>
+                                <th>លេខកុងទ័រ</th>
+                                <th>លេខទូរស័ព្ទ</th>
+                                <th>អាសយដ្ឋាន</th>
+                                <th style="text-align: center;">ជ្រើសរើស</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pickerCustomerList">
+                            <!-- Filled dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="e01-footer">
+                <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalCustomerPicker')">បិទ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: UNRECORDED CUSTOMERS ==================== -->
+    <div class="modal" id="modalUnrecordedCustomers">
+        <div class="e01-dialog-card" style="max-width: 820px;">
+            <div class="e01-title-bar">
+                <span class="e01-title-text">បញ្ជីអតិថិជនមិនទាន់ស្រង់អំណាន</span>
+                <button type="button" class="e01-btn-close" onclick="closeModal('modalUnrecordedCustomers')">&times;</button>
+            </div>
+            <div class="e01-body" style="padding: 14px;">
+                <div class="e02-flex-between mb-3">
+                    <span style="font-size: 14px; color: #475569;">
+                        ខែ/ឆ្នាំ: <strong id="unrecordedMonthDisplay" style="color: #0284c7;">--</strong> | មិនទាន់ស្រង់: <strong id="unrecordedCountDisplay" style="color: #dc2626;">0</strong> នាក់
+                    </span>
+                    <button type="button" class="e02-btn-secondary" onclick="loadUnrecordedCustomers()">🔄 ទាញយកឡើងវិញ</button>
+                </div>
+                <div class="e03-table-wrap" style="max-height: 380px;">
+                    <table class="e03-table">
+                        <thead>
+                            <tr>
+                                <th>កូដ</th>
+                                <th>ឈ្មោះអតិថិជន</th>
+                                <th>លេខកុងទ័រ</th>
+                                <th>ទូរស័ព្ទ</th>
+                                <th>លេខកុងទ័រចាស់ (kWh)</th>
+                                <th style="text-align: center;">សកម្មភាព</th>
+                            </tr>
+                        </thead>
+                        <tbody id="unrecordedListBody">
+                            <!-- Filled dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="e01-footer">
+                <button type="button" class="e01-btn e01-btn-close-action" onclick="closeModal('modalUnrecordedCustomers')">បិទ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="/static/js/app.js?v=3.1"></script>
+</body>
+</html>

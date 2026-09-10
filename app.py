@@ -11,6 +11,8 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 import database
 from datetime import datetime
 
+from jinja2 import ChoiceLoader, FileSystemLoader
+
 # Initialize Database tables if not exist
 try:
     database.init_db()
@@ -22,14 +24,37 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 
-app = Flask(
-    __name__,
-    template_folder=TEMPLATES_DIR,
-    static_folder=STATIC_DIR,
-    static_url_path="/static"
-)
+app = Flask(__name__, static_folder=None) # We handle /static/ flexibly
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.jinja_env.auto_reload = True
+
+# Support both nested (templates/...) and flat (root /app) structures
+template_loaders = []
+if os.path.exists(TEMPLATES_DIR):
+    template_loaders.append(FileSystemLoader(TEMPLATES_DIR))
+template_loaders.append(FileSystemLoader(BASE_DIR))
+app.jinja_loader = ChoiceLoader(template_loaders)
+
+@app.route("/static/<path:filename>")
+def serve_static(filename):
+    # 1. Look in static directory if present
+    if os.path.exists(STATIC_DIR):
+        target = os.path.join(STATIC_DIR, filename)
+        if os.path.isfile(target):
+            return send_from_directory(STATIC_DIR, filename)
+
+    # 2. Look in BASE_DIR with full path
+    target_base = os.path.join(BASE_DIR, filename)
+    if os.path.isfile(target_base):
+        return send_from_directory(BASE_DIR, filename)
+
+    # 3. Look in BASE_DIR with basename (e.g. css/style.css -> style.css, js/app.js -> app.js)
+    base_file = os.path.basename(filename)
+    target_flat = os.path.join(BASE_DIR, base_file)
+    if os.path.isfile(target_flat):
+        return send_from_directory(BASE_DIR, base_file)
+
+    return "Static file not found", 404
 
 # Template custom filters
 @app.template_filter('currency_khr')
@@ -99,8 +124,8 @@ def server_error(e):
 
 @app.route("/")
 def index():
-    index_file = os.path.join(TEMPLATES_DIR, "index.html")
-    if not os.path.exists(index_file):
+    has_index = os.path.exists(os.path.join(TEMPLATES_DIR, "index.html")) or os.path.exists(os.path.join(BASE_DIR, "index.html"))
+    if not has_index:
         files_present = os.listdir(BASE_DIR) if os.path.exists(BASE_DIR) else []
         return f"""
         <!DOCTYPE html>
@@ -108,28 +133,22 @@ def index():
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>E-PowerRTK - ខ្វះ Folder Templates</title>
+            <title>E-PowerRTK - ខ្វះ File index.html</title>
             <style>
                 body {{ font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; display: flex; justify-content: center; }}
                 .box {{ max-width: 640px; background: #1e293b; padding: 32px; border-radius: 16px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }}
                 h2 {{ color: #f59e0b; margin-top: 0; font-size: 22px; }}
                 p {{ color: #cbd5e1; line-height: 1.6; font-size: 15px; }}
                 .info-block {{ background: #0f172a; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 13px; color: #38bdf8; margin: 16px 0; border: 1px solid #1e3a8a; }}
-                .step {{ background: #1e3a8a33; border-left: 4px solid #38bdf8; padding: 12px 16px; margin: 12px 0; border-radius: 4px; }}
             </style>
         </head>
         <body>
             <div class="box">
-                <h2>⚠️ រកមិនឃើញ Folder "templates" នៅលើ Server</h2>
-                <p>Web Server និង Database (API) ដំណើរការបានជោគជ័យធម្មតា ប៉ុន្តែនៅលើ Railway ពុំទាន់មាន Folder <strong>templates</strong> និង <strong>static</strong> នៅឡើយទេ។</p>
+                <h2>⚠️ រកមិនឃើញ index.html</h2>
+                <p>Web Server និង Database (API) ដំណើរការបានជោគជ័យធម្មតា ប៉ុន្តែពុំទាន់មាន File <strong>index.html</strong> នៅឡើយទេ។</p>
                 <div class="info-block">
                     📂 Base Directory: {BASE_DIR}<br>
-                    📄 Files Currently Present: {', '.join(files_present)}<br>
-                    ❌ Missing: templates/index.html & static/
-                </div>
-                <div class="step">
-                    <strong>💡 វិធីដោះស្រាយ៖</strong><br>
-                    សូម Upload ឬ Push Folder <strong>templates</strong> និង <strong>static</strong> ទៅកាន់ GitHub / Railway ដើម្បីឱ្យផ្ទាំង Dashboard ដំណើរការពេញលេញ។
+                    📄 Files Currently Present: {', '.join(files_present)}
                 </div>
             </div>
         </body>

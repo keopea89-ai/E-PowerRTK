@@ -1,3 +1,4 @@
+import os
 import sys
 if hasattr(sys.stdout, 'reconfigure'):
     try:
@@ -6,11 +7,27 @@ if hasattr(sys.stdout, 'reconfigure'):
     except Exception:
         pass
 
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
 import database
 from datetime import datetime
 
-app = Flask(__name__)
+# Initialize Database tables if not exist
+try:
+    database.init_db()
+    database.seed_sample_data()
+except Exception as e:
+    print(f"[DB INIT WARNING] {e}", flush=True)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+app = Flask(
+    __name__,
+    template_folder=TEMPLATES_DIR,
+    static_folder=STATIC_DIR,
+    static_url_path="/static"
+)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.jinja_env.auto_reload = True
 
@@ -38,8 +55,86 @@ def number_fmt(val):
     except (ValueError, TypeError):
         return "0"
 
+@app.route("/api/health")
+def api_health():
+    templates_exist = os.path.exists(os.path.join(TEMPLATES_DIR, "index.html"))
+    static_exist = os.path.exists(os.path.join(STATIC_DIR, "css", "style.css"))
+    return jsonify({
+        "status": "healthy",
+        "templates_exist": templates_exist,
+        "static_exist": static_exist,
+        "base_dir": BASE_DIR,
+        "files_in_base": os.listdir(BASE_DIR) if os.path.exists(BASE_DIR) else []
+    })
+
+@app.errorhandler(500)
+def server_error(e):
+    import traceback
+    err_msg = str(e)
+    tb = traceback.format_exc()
+    return f"""
+    <!DOCTYPE html>
+    <html lang="km">
+    <head>
+        <meta charset="UTF-8">
+        <title>Server Error 500 - E-PowerRTK</title>
+        <style>
+            body {{ font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; text-align: center; }}
+            .card {{ max-width: 680px; margin: 0 auto; background: #1e293b; padding: 30px; border-radius: 12px; border: 1px solid #dc2626; text-align: left; }}
+            h2 {{ color: #ef4444; margin-top: 0; }}
+            pre {{ background: #0f172a; padding: 15px; border-radius: 8px; font-size: 13px; color: #fca5a5; overflow-x: auto; white-space: pre-wrap; }}
+            a {{ color: #38bdf8; text-decoration: none; }}
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h2>⚠️ មានបញ្ហាក្នុងប្រព័ន្ធ (Internal Server Error 500)</h2>
+            <p><strong>Error Detail:</strong> {err_msg}</p>
+            <pre>{tb}</pre>
+            <p><a href="/">🔄 ត្រឡប់ទៅទំព័រដើម</a></p>
+        </div>
+    </body>
+    </html>
+    """, 500
+
 @app.route("/")
 def index():
+    index_file = os.path.join(TEMPLATES_DIR, "index.html")
+    if not os.path.exists(index_file):
+        files_present = os.listdir(BASE_DIR) if os.path.exists(BASE_DIR) else []
+        return f"""
+        <!DOCTYPE html>
+        <html lang="km">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>E-PowerRTK - ខ្វះ Folder Templates</title>
+            <style>
+                body {{ font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; padding: 40px; display: flex; justify-content: center; }}
+                .box {{ max-width: 640px; background: #1e293b; padding: 32px; border-radius: 16px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }}
+                h2 {{ color: #f59e0b; margin-top: 0; font-size: 22px; }}
+                p {{ color: #cbd5e1; line-height: 1.6; font-size: 15px; }}
+                .info-block {{ background: #0f172a; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 13px; color: #38bdf8; margin: 16px 0; border: 1px solid #1e3a8a; }}
+                .step {{ background: #1e3a8a33; border-left: 4px solid #38bdf8; padding: 12px 16px; margin: 12px 0; border-radius: 4px; }}
+            </style>
+        </head>
+        <body>
+            <div class="box">
+                <h2>⚠️ រកមិនឃើញ Folder "templates" នៅលើ Server</h2>
+                <p>Web Server និង Database (API) ដំណើរការបានជោគជ័យធម្មតា ប៉ុន្តែនៅលើ Railway ពុំទាន់មាន Folder <strong>templates</strong> និង <strong>static</strong> នៅឡើយទេ។</p>
+                <div class="info-block">
+                    📂 Base Directory: {BASE_DIR}<br>
+                    📄 Files Currently Present: {', '.join(files_present)}<br>
+                    ❌ Missing: templates/index.html & static/
+                </div>
+                <div class="step">
+                    <strong>💡 វិធីដោះស្រាយ៖</strong><br>
+                    សូម Upload ឬ Push Folder <strong>templates</strong> និង <strong>static</strong> ទៅកាន់ GitHub / Railway ដើម្បីឱ្យផ្ទាំង Dashboard ដំណើរការពេញលេញ។
+                </div>
+            </div>
+        </body>
+        </html>
+        """, 200
     return render_template("index.html")
 
 @app.route("/invoice/<invoice_id>")
@@ -394,14 +489,18 @@ if __name__ == "__main__":
     database.init_db()
     database.seed_sample_data()
 
+    port = int(os.environ.get("PORT", 5050))
+    is_cloud = bool(os.environ.get("PORT") or os.environ.get("RAILWAY_ENVIRONMENT"))
+
     def open_browser():
         time.sleep(1.2)
         try:
-            webbrowser.open("http://127.0.0.1:5050")
+            webbrowser.open(f"http://127.0.0.1:{port}")
         except Exception:
             pass
 
-    threading.Thread(target=open_browser, daemon=True).start()
+    if not is_cloud:
+        threading.Thread(target=open_browser, daemon=True).start()
 
-    print("[SERVER RUNNING] E-PowerRTK running on http://127.0.0.1:5050", flush=True)
-    app.run(host="0.0.0.0", port=5050, debug=False, use_reloader=False)
+    print(f"[SERVER RUNNING] E-PowerRTK running on port {port}", flush=True)
+    app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
